@@ -13,9 +13,3 @@ struct User: Codable {
     var userId: String
     var backlog: [String]
 }
-
-extension User: Equatable {
-    static func == (lhs: User, rhs: User) -> Bool {
-        return lhs.backlog.elementsEqual(rhs.backlog)
-    }
-}

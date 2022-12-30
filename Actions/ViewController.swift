@@ -18,13 +18,25 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         let openActions = Firestore.firestore().collection(Action.collection())
+        
         dbListener.listenCollection(as: Action.self, openActions) { results in
             print(results)
         }
-        
-        let id = dbWriter.create(as: Action.self, Action(userId: "123", text: "test"))
-        dbWriter.execute()
-        print(id ?? "no id")
+        do {
+            var action = Action(userId: "123", text: "do this thing first")
+            let id = try dbWriter.create(as: Action.self, action)
+            dbWriter.execute()
+            print(id)
+            
+            action.id = id
+            action.text = "do this thing second"
+            
+            try dbWriter.update(as: Action.self, action)
+            dbWriter.execute()
+
+        } catch {
+            print(error)
+        }
     }
 
 

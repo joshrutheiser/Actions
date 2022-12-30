@@ -8,7 +8,6 @@
 /*
  
     To do:
-        - take out error handling responsibility from database class while standardizing errors
         - write firebase security rules for userId
         
  */
@@ -27,29 +26,32 @@ class DatabaseWriter {
         firestore = Firestore.firestore()
         writeBatch = firestore.batch()
     }
+    
+    func reset() {
+        writeBatch = firestore.batch()
+    }
 
     //MARK: - create
     
-    func create<T: Storable>(as model: T.Type, _ object: T) -> String? {
+    func create<T: Storable>(as model: T.Type, _ object: T) throws -> String {
         do {
             let docRef = firestore.collection(model.collection()).document()
             try writeBatch.setData(from: object, forDocument: docRef)
             return docRef.documentID
         } catch {
-            print("Error creating object: ", error)
-            return nil
+            throw Errors.ModelCreateError(object, error)
         }
     }
     
     //MARK: - update
     
-    func update<T: Storable>(as model: T.Type, _ object: T) {
+    func update<T: Storable>(as model: T.Type, _ object: T) throws {
         do {
-            guard let id = object.id else { print("Update missing id"); return }
+            guard let id = object.id else { throw Errors.ModelUpdateMissingId(object) }
             let docRef = firestore.collection(model.collection()).document(id)
             try writeBatch.setData(from: object, forDocument: docRef)
         } catch {
-            print("Error updating object: ", error)
+            throw Errors.UnknownUpdateWriteError(error)
         }
     }
     
@@ -58,10 +60,18 @@ class DatabaseWriter {
     func execute() {
         writeBatch.commit { error in
             if let error = error {
-                print("Error committing write batch: ", error)
+                print(Errors.BatchWriteError(error))
             }
-            
-            self.writeBatch = self.firestore.batch()
         }
+        reset()
+    }
+    
+    //MARK: - Errors
+    
+    enum Errors: Error {
+        case BatchWriteError(_ error: Error)
+        case ModelCreateError(_ model: Any, _ error: Error)
+        case ModelUpdateMissingId(_ model: Any)
+        case UnknownUpdateWriteError(_ error: Error)
     }
 }

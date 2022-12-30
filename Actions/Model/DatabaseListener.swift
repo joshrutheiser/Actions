@@ -8,7 +8,6 @@
 /*
  
     To do:
-        - take out error handling responsibility from database class while standardizing errors
         - write firebase security rules for userId
         
  */
@@ -33,11 +32,15 @@ class DatabaseListener {
     
     //MARK: - Listen document
     
-    func listenDocument<T: Storable>(_ id: String, as model: T.Type, handler: @escaping (T?) -> Void) {
+    func listenDocument<T: Storable>(
+        _ id: String,
+        as model: T.Type,
+        handler: @escaping (T?) -> Void
+    ){
         let docRef = firestore.collection(model.collection()).document(id)
         let listener = docRef.addSnapshotListener { snapshot, error in
             guard let snapshot = snapshot else {
-                print("Error listening: ", error ?? "")
+                print(Errors.UnknownListenError(error))
                 handler(nil)
                 return
             }
@@ -46,7 +49,7 @@ class DatabaseListener {
                 let object = try snapshot.data(as: model)
                 handler(object)
             } catch {
-                print("Error decoding: ", error)
+                print(Errors.DecodeModelError(snapshot.documentID))
                 handler(nil)
             }
         }
@@ -55,11 +58,15 @@ class DatabaseListener {
     
     //MARK: - Listen collection
     
-    func listenCollection<T: Storable>(as model: T.Type, _ query: Query, handler: @escaping ([Difference<T>]?) -> Void) {
+    func listenCollection<T: Storable>(
+        as model: T.Type,
+        _ query: Query,
+        handler: @escaping ([Difference<T>]) -> Void
+    ){
         let listener = query.addSnapshotListener { snapshot, error in
             guard let snapshot = snapshot else {
-                print("Error listening: ", error ?? "")
-                handler(nil)
+                print(Errors.UnknownListenError(error))
+                handler([])
                 return
             }
             
@@ -67,7 +74,6 @@ class DatabaseListener {
             for diff in snapshot.documentChanges {
                 do {
                     let object = try diff.document.data(as: model)
-                    // not checking diff type since actions aren't physically deleted
                     switch diff.type {
                         case .added, .modified:
                             changes.append(Difference(.Updated, object))
@@ -75,9 +81,8 @@ class DatabaseListener {
                             changes.append(Difference(.Removed, object))
                     }
                 } catch {
-                    print("Error decoding: ", error)
-                    handler(nil)
-                    return
+                    print(Errors.DecodeModelError(diff.document.documentID))
+                    continue
                 }
             }
             handler(changes)
@@ -100,5 +105,12 @@ class DatabaseListener {
             case Updated
             case Removed
         }
+    }
+    
+    //MARK: - Errors
+    
+    enum Errors: Error {
+        case DecodeModelError(_ id: String)
+        case UnknownListenError(_ error: Error?)
     }
 }

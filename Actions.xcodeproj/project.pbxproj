@@ -7,9 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		03E0249B29593FC300514D14 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E0249A29593FC300514D14 /* User.swift */; };
-		03E0249D2959571900514D14 /* ModelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E0249C2959571900514D14 /* ModelController.swift */; };
-		03E0249F29596C7100514D14 /* Listeners.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E0249E29596C7100514D14 /* Listeners.swift */; };
+		03A5A0AE295ED7010034D978 /* DatabaseListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A5A0AD295ED7010034D978 /* DatabaseListener.swift */; };
+		03A5A0B0295EE24B0034D978 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 03A5A0AF295EE24B0034D978 /* README.md */; };
 		03EB9BE52959219400305E5D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EB9BE42959219400305E5D /* AppDelegate.swift */; };
 		03EB9BE72959219400305E5D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EB9BE62959219400305E5D /* SceneDelegate.swift */; };
 		03EB9BE92959219400305E5D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EB9BE82959219400305E5D /* ViewController.swift */; };
@@ -19,11 +18,11 @@
 		03EB9BFC2959219500305E5D /* ActionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EB9BFB2959219500305E5D /* ActionsTests.swift */; };
 		03EB9C062959219500305E5D /* ActionsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EB9C052959219500305E5D /* ActionsUITests.swift */; };
 		03EB9C082959219500305E5D /* ActionsUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EB9C072959219500305E5D /* ActionsUITestsLaunchTests.swift */; };
-		03EB9C18295921D200305E5D /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EB9C17295921D200305E5D /* Action.swift */; };
+		03EB9C18295921D200305E5D /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EB9C17295921D200305E5D /* Model.swift */; };
 		03EB9C1A2959234F00305E5D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 03EB9C192959234F00305E5D /* GoogleService-Info.plist */; };
 		03EB9C1D2959242300305E5D /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 03EB9C1C2959242300305E5D /* FirebaseFirestore */; };
 		03EB9C1F2959242300305E5D /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 03EB9C1E2959242300305E5D /* FirebaseFirestoreSwift */; };
-		03EB9C212959248D00305E5D /* Operations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EB9C202959248D00305E5D /* Operations.swift */; };
+		03EB9C212959248D00305E5D /* DatabaseWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EB9C202959248D00305E5D /* DatabaseWriter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,9 +43,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		03E0249A29593FC300514D14 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
-		03E0249C2959571900514D14 /* ModelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelController.swift; sourceTree = "<group>"; };
-		03E0249E29596C7100514D14 /* Listeners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Listeners.swift; sourceTree = "<group>"; };
+		03A5A0AD295ED7010034D978 /* DatabaseListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseListener.swift; sourceTree = "<group>"; };
+		03A5A0AF295EE24B0034D978 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		03EB9BE12959219400305E5D /* Actions.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Actions.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		03EB9BE42959219400305E5D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		03EB9BE62959219400305E5D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -60,9 +58,9 @@
 		03EB9C012959219500305E5D /* ActionsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ActionsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		03EB9C052959219500305E5D /* ActionsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionsUITests.swift; sourceTree = "<group>"; };
 		03EB9C072959219500305E5D /* ActionsUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionsUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		03EB9C17295921D200305E5D /* Action.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
+		03EB9C17295921D200305E5D /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		03EB9C192959234F00305E5D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		03EB9C202959248D00305E5D /* Operations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operations.swift; sourceTree = "<group>"; };
+		03EB9C202959248D00305E5D /* DatabaseWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseWriter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -148,11 +146,10 @@
 		03EB9C14295921A000305E5D /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				03EB9C17295921D200305E5D /* Action.swift */,
-				03E0249A29593FC300514D14 /* User.swift */,
-				03E0249C2959571900514D14 /* ModelController.swift */,
-				03EB9C202959248D00305E5D /* Operations.swift */,
-				03E0249E29596C7100514D14 /* Listeners.swift */,
+				03EB9C17295921D200305E5D /* Model.swift */,
+				03EB9C202959248D00305E5D /* DatabaseWriter.swift */,
+				03A5A0AD295ED7010034D978 /* DatabaseListener.swift */,
+				03A5A0AF295EE24B0034D978 /* README.md */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -270,6 +267,7 @@
 			files = (
 				03EB9BF12959219400305E5D /* LaunchScreen.storyboard in Resources */,
 				03EB9C1A2959234F00305E5D /* GoogleService-Info.plist in Resources */,
+				03A5A0B0295EE24B0034D978 /* README.md in Resources */,
 				03EB9BEE2959219400305E5D /* Assets.xcassets in Resources */,
 				03EB9BEC2959219400305E5D /* Main.storyboard in Resources */,
 			);
@@ -296,14 +294,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				03EB9C212959248D00305E5D /* Operations.swift in Sources */,
+				03EB9C212959248D00305E5D /* DatabaseWriter.swift in Sources */,
 				03EB9BE92959219400305E5D /* ViewController.swift in Sources */,
-				03E0249B29593FC300514D14 /* User.swift in Sources */,
 				03EB9BE52959219400305E5D /* AppDelegate.swift in Sources */,
-				03EB9C18295921D200305E5D /* Action.swift in Sources */,
-				03E0249D2959571900514D14 /* ModelController.swift in Sources */,
+				03EB9C18295921D200305E5D /* Model.swift in Sources */,
 				03EB9BE72959219400305E5D /* SceneDelegate.swift in Sources */,
-				03E0249F29596C7100514D14 /* Listeners.swift in Sources */,
+				03A5A0AE295ED7010034D978 /* DatabaseListener.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

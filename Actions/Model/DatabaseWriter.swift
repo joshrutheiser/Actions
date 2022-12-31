@@ -5,13 +5,6 @@
 //  Created by Josh Rutheiser on 12/25/22.
 //
 
-/*
- 
-    To do:
-        - write firebase security rules for userId
-        
- */
-
 import Foundation
 import Firebase
 import FirebaseFirestoreSwift
@@ -21,8 +14,10 @@ import FirebaseFirestoreSwift
 class DatabaseWriter {
     private var firestore: Firestore
     private var writeBatch: WriteBatch
+    private var rootPath: String
     
     init() {
+        rootPath = ""
         firestore = Firestore.firestore()
         writeBatch = firestore.batch()
     }
@@ -30,12 +25,17 @@ class DatabaseWriter {
     func reset() {
         writeBatch = firestore.batch()
     }
+    
+    func setRootPath(rootPath: String) {
+        self.rootPath = rootPath
+    }
 
     //MARK: - create
     
     func create<T: Storable>(as model: T.Type, _ object: T) throws -> String {
         do {
-            let docRef = firestore.collection(model.collection()).document()
+            let path = rootPath + model.collection()
+            let docRef = firestore.collection(path).document()
             try writeBatch.setData(from: object, forDocument: docRef)
             return docRef.documentID
         } catch {
@@ -48,7 +48,8 @@ class DatabaseWriter {
     func update<T: Storable>(as model: T.Type, _ object: T) throws {
         do {
             guard let id = object.id else { throw Errors.ModelUpdateMissingId(object) }
-            let docRef = firestore.collection(model.collection()).document(id)
+            let path = rootPath + model.collection()
+            let docRef = firestore.collection(path).document(id)
             try writeBatch.setData(from: object, forDocument: docRef)
         } catch {
             throw Errors.UnknownUpdateWriteError(error)
@@ -57,11 +58,12 @@ class DatabaseWriter {
     
     //MARK: - execute
     
-    func execute() {
+    func execute(_ handler: @escaping () -> Void = {}) {
         writeBatch.commit { error in
             if let error = error {
                 print(Errors.BatchWriteError(error))
             }
+            handler()
         }
         reset()
     }

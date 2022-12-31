@@ -1,6 +1,17 @@
 
 # To do
-1. Learn about error handling best practices
-2. Take out error handling responsibility from database class while standardizing errors
-3. Write model controller
-
+
+- Investigate setting root path in database reader
+- List model controller functions
+- Write model controller tests
+- write firebase security rules for userId
+
+
+# References
+
+For Firestore unit testing and querying inspiration:
+    https://github.com/sgr-ksmt/FireSnapshot/tree/master/FireSnapshotTests/Sources
+
+# Complete
+
+- Write unit tests for Database Writer and Reader

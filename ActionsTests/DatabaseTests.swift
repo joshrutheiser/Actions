@@ -30,7 +30,8 @@ class DatabaseTests: XCTestCase {
         semaphore.wait()
         
         testPath = "tests/\(testId)/"
-        databaseWriter.setRootPath(rootPath: testPath)
+        databaseWriter.setRootPath(testPath)
+        databaseReader.setRootPath(testPath)
     }
 
     override func tearDownWithError() throws {
@@ -41,9 +42,7 @@ class DatabaseTests: XCTestCase {
 
     func testUserNotCreated() throws {
         let expectation = expectation(description: #function)
-        let query = QueryBuilder(User.self, rootPath: testPath)
-            .user(userId)
-            .build()
+        let query = QueryBuilder(User.self).user(userId)
         
         databaseReader.getDocuments(query, as: User.self) { results in
             XCTAssertTrue(results.isEmpty)
@@ -61,9 +60,7 @@ class DatabaseTests: XCTestCase {
         let id = try! databaseWriter.create(as: User.self, User(userId))
         databaseWriter.execute() { [self] in
             
-            let query = QueryBuilder(User.self, rootPath: testPath)
-                .user(userId)
-                .build()
+            let query = QueryBuilder(User.self).user(userId)
             
             databaseReader.getDocuments(query, as: User.self) { [self] results in
                 XCTAssert(results.count == 1)
@@ -84,9 +81,7 @@ class DatabaseTests: XCTestCase {
         let id = try! databaseWriter.create(as: User.self, User(userId))
         
         let exp = expectation(description: #function)
-        let query = QueryBuilder(User.self, rootPath: testPath)
-            .user(userId)
-            .build()
+        let query = QueryBuilder(User.self).user(userId)
 
         databaseReader.listenDocuments(query, as: User.self) { [self] results in
             if results.isEmpty == false {
@@ -120,9 +115,7 @@ class DatabaseTests: XCTestCase {
         user.currentMode = .Work
         try! databaseWriter.update(as: User.self, user)
 
-        let query = QueryBuilder(User.self, rootPath: testPath)
-            .user(userId)
-            .build()
+        let query = QueryBuilder(User.self).user(userId)
 
         let exp2 = expectation(description: #function + "2")
         var count = 0
@@ -159,9 +152,7 @@ class DatabaseTests: XCTestCase {
         
         databaseWriter.execute() { [self] in
             
-            let query = QueryBuilder(Action.self, rootPath: testPath)
-                .user(userId)
-                .build()
+            let query = QueryBuilder(Action.self).user(userId)
             
             var count = 0
             databaseReader.listenDocuments(query, as: Action.self) { results in
@@ -194,9 +185,7 @@ class DatabaseTests: XCTestCase {
         let id3 = try! databaseWriter.create(as: Action.self, Action(userId, "3"))
         databaseWriter.execute() { [self] in
             
-            let query = QueryBuilder(Action.self, rootPath: testPath)
-                .user(userId)
-                .build()
+            let query = QueryBuilder(Action.self).user(userId)
             
             databaseReader.getDocuments(query, as: Action.self) { [self] results in
                 XCTAssert(results.count == 3)
@@ -230,9 +219,7 @@ class DatabaseTests: XCTestCase {
             try! databaseWriter.update(as: Action.self, action)
             databaseWriter.execute() { [self] in
                 
-                let query = QueryBuilder(Action.self, rootPath: testPath)
-                    .user(userId)
-                    .build()
+                let query = QueryBuilder(Action.self).user(userId)
                 
                 databaseReader.getDocuments(query, as: Action.self) { [self] results in
                     XCTAssertEqual(results.count, 2)

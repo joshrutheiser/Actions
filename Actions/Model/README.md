@@ -1,7 +1,7 @@
 
 # To do
 
-- Investigate setting root path in database reader
+- Caching design
 - List model controller functions
 - Write model controller tests
 - write firebase security rules for userId
@@ -15,3 +15,4 @@ For Firestore unit testing and querying inspiration:
 # Complete
 
 - Write unit tests for Database Writer and Reader
+- Investigate setting root path in database reader (NSPredicate?)

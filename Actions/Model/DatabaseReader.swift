@@ -5,13 +5,6 @@
 //  Created by Josh Rutheiser on 12/30/22.
 //
 
-/*
- 
-    To do:
-        - write firebase security rules for userId
-        
- */
-
 import Firebase
 import FirebaseFirestoreSwift
 
@@ -28,7 +21,7 @@ class DatabaseReader {
         rootPath = ""
     }
     
-    func setRootPath(rootPath: String) {
+    func setRootPath(_ rootPath: String) {
         self.rootPath = rootPath
     }
     
@@ -39,11 +32,12 @@ class DatabaseReader {
     //MARK: - Get documents
     
     func getDocuments<T: Storable>(
-        _ query: Query,
+        _ query: QueryBuilder<T>,
         as model: T.Type,
         handler: @escaping ([Difference<T>]) -> Void
     ){
-        query.getDocuments {
+        query.rootPath(rootPath)
+        query.build().getDocuments {
             [self] (snapshot, error) in
             unpackSnapshot(from: (snapshot, error), as: model, to: handler)
         }
@@ -52,11 +46,12 @@ class DatabaseReader {
     //MARK: - Listen documents
     
     func listenDocuments<T: Storable>(
-        _ query: Query,
+        _ query: QueryBuilder<T>,
         as model: T.Type,
         handler: @escaping ([Difference<T>]) -> Void
     ){
-        let listener = query.addSnapshotListener {
+        query.rootPath(rootPath)
+        let listener = query.build().addSnapshotListener {
             [self] (snapshot, error) in
             unpackSnapshot(from: (snapshot, error), as: model, to: handler)
         }

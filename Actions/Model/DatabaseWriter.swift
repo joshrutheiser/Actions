@@ -26,7 +26,7 @@ class DatabaseWriter {
         writeBatch = firestore.batch()
     }
     
-    func setRootPath(rootPath: String) {
+    func setRootPath(_ rootPath: String) {
         self.rootPath = rootPath
     }
 

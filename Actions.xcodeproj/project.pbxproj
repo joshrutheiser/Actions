@@ -10,7 +10,9 @@
 		03A5A0AE295ED7010034D978 /* DatabaseReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A5A0AD295ED7010034D978 /* DatabaseReader.swift */; };
 		03A5A0B0295EE24B0034D978 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 03A5A0AF295EE24B0034D978 /* README.md */; };
 		03DF6514295FFC03000CF4B9 /* QueryBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DF6513295FFC03000CF4B9 /* QueryBuilder.swift */; };
-		03DF651629601C9E000CF4B9 /* TestModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DF651529601C9E000CF4B9 /* TestModel.swift */; };
+		03DF651629601C9E000CF4B9 /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DF651529601C9E000CF4B9 /* Test.swift */; };
+		03DF65182960DE3B000CF4B9 /* ModelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DF65172960DE3B000CF4B9 /* ModelController.swift */; };
+		03DF651A2960E438000CF4B9 /* ModelControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DF65192960E438000CF4B9 /* ModelControllerTests.swift */; };
 		03EB9BE52959219400305E5D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EB9BE42959219400305E5D /* AppDelegate.swift */; };
 		03EB9BE72959219400305E5D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EB9BE62959219400305E5D /* SceneDelegate.swift */; };
 		03EB9BE92959219400305E5D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EB9BE82959219400305E5D /* ViewController.swift */; };
@@ -48,7 +50,9 @@
 		03A5A0AD295ED7010034D978 /* DatabaseReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseReader.swift; sourceTree = "<group>"; };
 		03A5A0AF295EE24B0034D978 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		03DF6513295FFC03000CF4B9 /* QueryBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueryBuilder.swift; sourceTree = "<group>"; };
-		03DF651529601C9E000CF4B9 /* TestModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestModel.swift; sourceTree = "<group>"; };
+		03DF651529601C9E000CF4B9 /* Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test.swift; sourceTree = "<group>"; };
+		03DF65172960DE3B000CF4B9 /* ModelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelController.swift; sourceTree = "<group>"; };
+		03DF65192960E438000CF4B9 /* ModelControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelControllerTests.swift; sourceTree = "<group>"; };
 		03EB9BE12959219400305E5D /* Actions.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Actions.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		03EB9BE42959219400305E5D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		03EB9BE62959219400305E5D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -133,8 +137,9 @@
 		03EB9BFA2959219500305E5D /* ActionsTests */ = {
 			isa = PBXGroup;
 			children = (
+				03DF651529601C9E000CF4B9 /* Test.swift */,
 				03EB9BFB2959219500305E5D /* DatabaseTests.swift */,
-				03DF651529601C9E000CF4B9 /* TestModel.swift */,
+				03DF65192960E438000CF4B9 /* ModelControllerTests.swift */,
 			);
 			path = ActionsTests;
 			sourceTree = "<group>";
@@ -152,6 +157,7 @@
 			isa = PBXGroup;
 			children = (
 				03EB9C17295921D200305E5D /* Model.swift */,
+				03DF65172960DE3B000CF4B9 /* ModelController.swift */,
 				03EB9C202959248D00305E5D /* DatabaseWriter.swift */,
 				03A5A0AD295ED7010034D978 /* DatabaseReader.swift */,
 				03DF6513295FFC03000CF4B9 /* QueryBuilder.swift */,
@@ -302,6 +308,7 @@
 			files = (
 				03EB9C212959248D00305E5D /* DatabaseWriter.swift in Sources */,
 				03EB9BE92959219400305E5D /* ViewController.swift in Sources */,
+				03DF65182960DE3B000CF4B9 /* ModelController.swift in Sources */,
 				03EB9BE52959219400305E5D /* AppDelegate.swift in Sources */,
 				03EB9C18295921D200305E5D /* Model.swift in Sources */,
 				03EB9BE72959219400305E5D /* SceneDelegate.swift in Sources */,
@@ -315,7 +322,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				03EB9BFC2959219500305E5D /* DatabaseTests.swift in Sources */,
-				03DF651629601C9E000CF4B9 /* TestModel.swift in Sources */,
+				03DF651A2960E438000CF4B9 /* ModelControllerTests.swift in Sources */,
+				03DF651629601C9E000CF4B9 /* Test.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

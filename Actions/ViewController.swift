@@ -10,8 +10,6 @@ import Firebase
 
 class ViewController: UIViewController {
     @IBOutlet weak var content: UIView!
-    var dbWriter = DatabaseWriter()
-    var dbListener = DatabaseReader()
     var tableView = UITableView()
     
     override func viewDidLoad() {

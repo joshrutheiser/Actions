@@ -14,14 +14,16 @@ class DatabaseTests: XCTestCase {
     var databaseWriter: DatabaseWriter!
     var databaseReader: DatabaseReader!
     var testPath: String!
+    var session: String!
     
     override func setUpWithError() throws {
         databaseWriter = DatabaseWriter()
         databaseReader = DatabaseReader()
         userId = UUID().uuidString
+        session = "session_\(UUID().uuidString)"
         
         let semaphore = DispatchSemaphore(value: 1)
-        let testId = try databaseWriter.create(as: Test.self, Test(userId, name))
+        let testId = try databaseWriter.create(as: Test.self, Test(userId, name, session))
         DispatchQueue.main.async { [self] in
             databaseWriter.execute() {
                 semaphore.signal()
@@ -57,7 +59,7 @@ class DatabaseTests: XCTestCase {
     func testCreateUser() throws {
         let exp = expectation(description: #function)
         
-        let id = try! databaseWriter.create(as: User.self, User(userId))
+        let id = try! databaseWriter.create(as: User.self, User(userId, session))
         databaseWriter.execute() { [self] in
             
             let query = QueryBuilder(User.self).user(userId)
@@ -78,7 +80,7 @@ class DatabaseTests: XCTestCase {
     //MARK: - User listener
     
     func testUserListener() throws {
-        let id = try! databaseWriter.create(as: User.self, User(userId))
+        let id = try! databaseWriter.create(as: User.self, User(userId, session))
         
         let exp = expectation(description: #function)
         let query = QueryBuilder(User.self).user(userId)
@@ -105,7 +107,7 @@ class DatabaseTests: XCTestCase {
     
     func testUserUpdate() throws {
         let exp1 = expectation(description: #function)
-        var user = User(userId)
+        var user = User(userId, session)
         let id = try! databaseWriter.create(as: User.self, user)
         databaseWriter.execute() {
             exp1.fulfill()
@@ -145,10 +147,10 @@ class DatabaseTests: XCTestCase {
     func testRemoveFromListener() throws {
         let exp = expectation(description: #function)
         
-        var action = Action(userId, "2")
-        let _ = try! databaseWriter.create(as: Action.self, Action(userId, "1"))
+        var action = Action(userId, "2", session)
+        let _ = try! databaseWriter.create(as: Action.self, Action(userId, "1", session))
         let id2 = try! databaseWriter.create(as: Action.self, action)
-        let _ = try! databaseWriter.create(as: Action.self, Action(userId, "3"))
+        let _ = try! databaseWriter.create(as: Action.self, Action(userId, "3", session))
         
         databaseWriter.execute() { [self] in
             
@@ -180,9 +182,9 @@ class DatabaseTests: XCTestCase {
     func testCreateMultipleActions() throws {
         let exp = expectation(description: #function)
         
-        let id1 = try! databaseWriter.create(as: Action.self, Action(userId, "1"))
-        let id2 = try! databaseWriter.create(as: Action.self, Action(userId, "2"))
-        let id3 = try! databaseWriter.create(as: Action.self, Action(userId, "3"))
+        let id1 = try! databaseWriter.create(as: Action.self, Action(userId, "1", session))
+        let id2 = try! databaseWriter.create(as: Action.self, Action(userId, "2", session))
+        let id3 = try! databaseWriter.create(as: Action.self, Action(userId, "3", session))
         databaseWriter.execute() { [self] in
             
             let query = QueryBuilder(Action.self).user(userId)
@@ -208,10 +210,10 @@ class DatabaseTests: XCTestCase {
     func testRemoveFromGetDocs() throws {
         let exp = expectation(description: #function)
         
-        var action = Action(userId, "2")
-        let id1 = try! databaseWriter.create(as: Action.self, Action(userId, "1"))
+        var action = Action(userId, "2", session)
+        let id1 = try! databaseWriter.create(as: Action.self, Action(userId, "1", session))
         let id2 = try! databaseWriter.create(as: Action.self, action)
-        let id3 = try! databaseWriter.create(as: Action.self, Action(userId, "3"))
+        let id3 = try! databaseWriter.create(as: Action.self, Action(userId, "3", session))
         
         databaseWriter.execute() { [self] in
             action.id = id2

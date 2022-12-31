@@ -42,6 +42,13 @@ class QueryBuilder<T: Storable> {
         return self
     }
     
+    @discardableResult
+    func whereField(_ field: String, notEqualTo value: String) -> Self {
+        let predicate = NSPredicate(format: "\(field) != %@", value)
+        predicates.append(predicate)
+        return self
+    }
+    
     func build() -> Query {
         var query: Query = Firestore.firestore().collection(rootPath + collection)
         for predicate in predicates {

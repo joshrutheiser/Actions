@@ -13,13 +13,15 @@ import FirebaseFirestoreSwift
 struct Action: Storable, Codable {
     @DocumentID var id: String?
     var userId: String
+    var lastSession: String
     static func collection() -> String { "actions" }
     
     var text: String
     
-    init(_ userId: String, _ text: String) {
+    init(_ userId: String, _ text: String, _ session: String) {
         self.userId = userId
         self.text = text
+        lastSession = session
     }
 }
 
@@ -28,12 +30,14 @@ struct Action: Storable, Codable {
 struct User: Storable, Codable {
     @DocumentID var id: String?
     var userId: String
+    var lastSession: String
     static func collection() -> String { "users" }
     
     var currentMode: Mode = .Personal
 
-    init(_ userId: String) {
+    init(_ userId: String, _ session: String) {
         self.userId = userId
+        lastSession = session
     }
     
     enum Mode: String, Codable {
@@ -47,5 +51,6 @@ struct User: Storable, Codable {
 protocol Storable: Codable {
     var id: String? { get set }
     var userId: String { get set }
+    var lastSession: String { get set }
     static func collection() -> String
 }

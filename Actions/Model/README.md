@@ -2,6 +2,8 @@
 # To do
 
 - Caching design
+- Dispach async functions to background thread
+    to prevent data races
 - List model controller functions
 - Write model controller tests
 - write firebase security rules for userId
@@ -16,3 +18,10 @@ For Firestore unit testing and querying inspiration:
 
 - Write unit tests for Database Writer and Reader
 - Investigate setting root path in database reader (NSPredicate?)
+
+
+
+
+# Features
+
+(not complete) data race free real-time cross-device collaboration

@@ -33,47 +33,31 @@ class DatabaseWriter {
     //MARK: - create
     
     func create<T: Storable>(as model: T.Type, _ object: T) throws -> String {
-        do {
-            let path = rootPath + model.collection()
-            let docRef = firestore.collection(path).document()
-            try writeBatch.setData(from: object, forDocument: docRef)
-            return docRef.documentID
-        } catch {
-            throw Errors.ModelCreateError(object, error)
-        }
+        let path = rootPath + model.collection()
+        let docRef = firestore.collection(path).document()
+        try writeBatch.setData(from: object, forDocument: docRef)
+        return docRef.documentID
     }
     
     //MARK: - update
     
     func update<T: Storable>(as model: T.Type, _ object: T) throws {
-        do {
-            guard let id = object.id else { throw Errors.ModelUpdateMissingId(object) }
-            let path = rootPath + model.collection()
-            let docRef = firestore.collection(path).document(id)
-            try writeBatch.setData(from: object, forDocument: docRef)
-        } catch {
-            throw Errors.UnknownUpdateWriteError(error)
-        }
+        guard let id = object.id else { throw Errors.ModelUpdateMissingId(object) }
+        let path = rootPath + model.collection()
+        let docRef = firestore.collection(path).document(id)
+        try writeBatch.setData(from: object, forDocument: docRef)
     }
     
     //MARK: - execute
     
-    func execute(_ handler: @escaping () -> Void = {}) {
-        writeBatch.commit { error in
-            if let error = error {
-                print(Errors.BatchWriteError(error))
-            }
-            handler()
-        }
+    func execute() async throws {
+        try await writeBatch.commit()
         reset()
     }
     
     //MARK: - Errors
     
     enum Errors: Error {
-        case BatchWriteError(_ error: Error)
-        case ModelCreateError(_ model: Any, _ error: Error)
         case ModelUpdateMissingId(_ model: Any)
-        case UnknownUpdateWriteError(_ error: Error)
     }
 }

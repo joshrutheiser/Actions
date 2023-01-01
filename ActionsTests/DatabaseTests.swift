@@ -16,225 +16,165 @@ class DatabaseTests: XCTestCase {
     var testPath: String!
     var session: String!
     
-    override func setUpWithError() throws {
+    override func setUp() async throws {
         databaseWriter = DatabaseWriter()
         databaseReader = DatabaseReader()
         userId = UUID().uuidString
         session = "session_\(UUID().uuidString)"
         
-        let semaphore = DispatchSemaphore(value: 1)
         let testId = try databaseWriter.create(as: Test.self, Test(userId, name, session))
-        DispatchQueue.main.async { [self] in
-            databaseWriter.execute() {
-                semaphore.signal()
-            }
-        }
-        semaphore.wait()
+        try await databaseWriter.execute()
         
         testPath = "tests/\(testId)/"
         databaseWriter.setRootPath(testPath)
         databaseReader.setRootPath(testPath)
     }
-
-    override func tearDownWithError() throws {
-        
-    }
     
     //MARK: - User not created
 
-    func testUserNotCreated() throws {
-        let expectation = expectation(description: #function)
+    func testUserNotCreated() async throws {
         let query = QueryBuilder(User.self).user(userId)
-        
-        databaseReader.getDocuments(query, as: User.self) { results in
-            XCTAssertTrue(results.isEmpty)
-            expectation.fulfill()
-        }
-        
-        waitForExpectations(timeout: 5, handler: nil)
+        let results = try await databaseReader.getDocuments(query, as: User.self)
+        XCTAssertTrue(results.isEmpty)
     }
     
     //MARK: - Create user
     
-    func testCreateUser() throws {
-        let exp = expectation(description: #function)
+    func testCreateUser() async throws {
+        let id = try databaseWriter.create(as: User.self, User(userId, session))
+        try await databaseWriter.execute()
         
-        let id = try! databaseWriter.create(as: User.self, User(userId, session))
-        databaseWriter.execute() { [self] in
-            
-            let query = QueryBuilder(User.self).user(userId)
-            
-            databaseReader.getDocuments(query, as: User.self) { [self] results in
-                XCTAssert(results.count == 1)
-                XCTAssertEqual(results.first!.change, .Update)
-                XCTAssertEqual(results.first!.object.id, id)
-                XCTAssertEqual(results.first!.object.userId, userId)
-                exp.fulfill()
-            }
-            
-        }
+        let query = QueryBuilder(User.self).user(userId)
+        let results = try await databaseReader.getDocuments(query, as: User.self)
         
-        waitForExpectations(timeout: 5, handler: nil)
+        XCTAssert(results.count == 1)
+        XCTAssertEqual(results.first!.change, .Set)
+        XCTAssertEqual(results.first!.object.id, id)
+        XCTAssertEqual(results.first!.object.userId, userId)
     }
     
     //MARK: - User listener
     
-    func testUserListener() throws {
-        let id = try! databaseWriter.create(as: User.self, User(userId, session))
+    func testUserListener() async throws {
+        let id = try databaseWriter.create(as: User.self, User(userId, session))
+        let query = QueryBuilder(User.self).user(userId)
         
         let exp = expectation(description: #function)
-        let query = QueryBuilder(User.self).user(userId)
-
         databaseReader.listenDocuments(query, as: User.self) { [self] results in
             if results.isEmpty == false {
                 XCTAssert(results.count == 1)
-                XCTAssertEqual(results.first!.change, .Update)
+                XCTAssertEqual(results.first!.change, .Set)
                 XCTAssertEqual(results.first!.object.id, id)
                 XCTAssertEqual(results.first!.object.userId, userId)
                 exp.fulfill()
             }
         }
         
-        let exp2 = expectation(description: #function + "2")
-        databaseWriter.execute() {
-            exp2.fulfill()
-        }
-        
-        waitForExpectations(timeout: 5, handler: nil)
+        try await databaseWriter.execute()
+        await waitForExpectations(timeout: 5, handler: nil)
     }
     
     //MARK: - User update
     
-    func testUserUpdate() throws {
-        let exp1 = expectation(description: #function)
+    func testUserUpdate() async throws {
         var user = User(userId, session)
-        let id = try! databaseWriter.create(as: User.self, user)
-        databaseWriter.execute() {
-            exp1.fulfill()
-        }
-        
+        let id = try databaseWriter.create(as: User.self, user)
+        try await databaseWriter.execute()
+
         user.id = id
         user.currentMode = .Work
-        try! databaseWriter.update(as: User.self, user)
+        try databaseWriter.update(as: User.self, user)
 
-        let query = QueryBuilder(User.self).user(userId)
-
-        let exp2 = expectation(description: #function + "2")
         var count = 0
+        let query = QueryBuilder(User.self).user(userId)
+        let exp = expectation(description: #function)
         databaseReader.listenDocuments(query, as: User.self) { [self] results in
             count += 1
             if count == 2 {
                 XCTAssert(results.count == 1)
-                XCTAssertEqual(results.first!.change, .Update)
+                XCTAssertEqual(results.first!.change, .Set)
                 XCTAssertEqual(results.first!.object.id, id)
                 XCTAssertEqual(results.first!.object.userId, userId)
                 XCTAssertEqual(results.first!.object.currentMode, .Work)
-                exp2.fulfill()
+                exp.fulfill()
             }
         }
-        
-
-        let exp3 = expectation(description: #function + "3")
-        databaseWriter.execute() {
-            exp3.fulfill()
-        }
-        
-        waitForExpectations(timeout: 5, handler: nil)
+        try await databaseWriter.execute()
+        await waitForExpectations(timeout: 5, handler: nil)
     }
 
     //MARK: - Remove from listener
-    
-    func testRemoveFromListener() throws {
-        let exp = expectation(description: #function)
-        
+
+    func testRemoveFromListener() async throws {
+
         var action = Action(userId, "2", session)
-        let _ = try! databaseWriter.create(as: Action.self, Action(userId, "1", session))
-        let id2 = try! databaseWriter.create(as: Action.self, action)
-        let _ = try! databaseWriter.create(as: Action.self, Action(userId, "3", session))
-        
-        databaseWriter.execute() { [self] in
-            
-            let query = QueryBuilder(Action.self).user(userId)
-            
-            var count = 0
-            databaseReader.listenDocuments(query, as: Action.self) { results in
-                count += 1
-                if count == 2 {
-                    XCTAssertEqual(results.count, 1)
-                    XCTAssertEqual(results.first!.change, .Remove)
-                    XCTAssertEqual(results.first!.object.id, id2)
-                    exp.fulfill()
-                }
+        let _ = try databaseWriter.create(as: Action.self, Action(userId, "1", session))
+        let id2 = try databaseWriter.create(as: Action.self, action)
+        let _ = try databaseWriter.create(as: Action.self, Action(userId, "3", session))
+        try await databaseWriter.execute()
 
-            }
-            
-            action.id = id2
-            action.userId = ""
-            try! databaseWriter.update(as: Action.self, action)
-            databaseWriter.execute()
-        }
-        
-        waitForExpectations(timeout: 5, handler: nil)
-    }
-    
-    //MARK: Create multiple actions
-    
-    func testCreateMultipleActions() throws {
+        var count = 0
+        let query = QueryBuilder(Action.self).user(userId)
         let exp = expectation(description: #function)
-        
-        let id1 = try! databaseWriter.create(as: Action.self, Action(userId, "1", session))
-        let id2 = try! databaseWriter.create(as: Action.self, Action(userId, "2", session))
-        let id3 = try! databaseWriter.create(as: Action.self, Action(userId, "3", session))
-        databaseWriter.execute() { [self] in
-            
-            let query = QueryBuilder(Action.self).user(userId)
-            
-            databaseReader.getDocuments(query, as: Action.self) { [self] results in
-                XCTAssert(results.count == 3)
-                for result in results {
-                    XCTAssertEqual(result.change, .Update)
-                    XCTAssert(Set([id1, id2, id3]).contains(result.object.id))
-                    XCTAssertEqual(result.object.userId, userId)
-                }
-
+        databaseReader.listenDocuments(query, as: Action.self) { results in
+            count += 1
+            if count == 2 {
+                XCTAssertEqual(results.count, 1)
+                XCTAssertEqual(results.first!.change, .Remove)
+                XCTAssertEqual(results.first!.object.id, id2)
                 exp.fulfill()
             }
-            
         }
+
+        action.id = id2
+        action.userId = ""
+        try databaseWriter.update(as: Action.self, action)
+        try await databaseWriter.execute()
         
-        waitForExpectations(timeout: 5, handler: nil)
+        await waitForExpectations(timeout: 5, handler: nil)
     }
-    
-    //MARK: - Remove from get docs
-    
-    func testRemoveFromGetDocs() throws {
-        let exp = expectation(description: #function)
-        
-        var action = Action(userId, "2", session)
-        let id1 = try! databaseWriter.create(as: Action.self, Action(userId, "1", session))
-        let id2 = try! databaseWriter.create(as: Action.self, action)
-        let id3 = try! databaseWriter.create(as: Action.self, Action(userId, "3", session))
-        
-        databaseWriter.execute() { [self] in
-            action.id = id2
-            action.userId = ""
-            try! databaseWriter.update(as: Action.self, action)
-            databaseWriter.execute() { [self] in
-                
-                let query = QueryBuilder(Action.self).user(userId)
-                
-                databaseReader.getDocuments(query, as: Action.self) { [self] results in
-                    XCTAssertEqual(results.count, 2)
-                    for result in results {
-                        XCTAssertEqual(result.change, .Update)
-                        XCTAssert(Set([id1, id3]).contains(result.object.id))
-                        XCTAssertEqual(result.object.userId, userId)
-                    }
-                    exp.fulfill()
-                }
-            }
+
+    //MARK: Create multiple actions
+
+    func testCreateMultipleActions() async throws {
+        let id1 = try databaseWriter.create(as: Action.self, Action(userId, "1", session))
+        let id2 = try databaseWriter.create(as: Action.self, Action(userId, "2", session))
+        let id3 = try databaseWriter.create(as: Action.self, Action(userId, "3", session))
+        try await databaseWriter.execute()
+
+        let query = QueryBuilder(Action.self).user(userId)
+        let results = try await databaseReader.getDocuments(query, as: Action.self)
+        XCTAssert(results.count == 3)
+        for result in results {
+            XCTAssertEqual(result.change, .Set)
+            XCTAssert(Set([id1, id2, id3]).contains(result.object.id))
+            XCTAssertEqual(result.object.userId, userId)
         }
+    }
+
+    //MARK: - Remove from get docs
+
+    func testRemoveFromGetDocs() async throws {
+        var action = Action(userId, "2", session)
+        let id1 = try databaseWriter.create(as: Action.self, Action(userId, "1", session))
+        let id2 = try databaseWriter.create(as: Action.self, action)
+        let id3 = try databaseWriter.create(as: Action.self, Action(userId, "3", session))
+        try await databaseWriter.execute()
         
-        waitForExpectations(timeout: 5, handler: nil)
+        action.id = id2
+        action.userId = ""
+        try databaseWriter.update(as: Action.self, action)
+        try await databaseWriter.execute()
+
+        let query = QueryBuilder(Action.self).user(userId)
+        let results = try await databaseReader.getDocuments(query, as: Action.self)
+        
+        XCTAssertEqual(results.count, 2)
+        for result in results {
+            XCTAssertEqual(result.change, .Set)
+            XCTAssert(Set([id1, id3]).contains(result.object.id))
+            XCTAssertEqual(result.object.userId, userId)
+        }
+
     }
 }

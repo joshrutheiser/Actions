@@ -33,14 +33,11 @@ class DatabaseReader {
     
     func getDocuments<T: Storable>(
         _ query: QueryBuilder<T>,
-        as model: T.Type,
-        handler: @escaping ([Difference<T>]) -> Void
-    ){
+        as model: T.Type) async throws -> [Difference<T>]
+    {
         query.rootPath(rootPath)
-        query.build().getDocuments {
-            [self] (snapshot, error) in
-            unpackSnapshot(from: (snapshot, error), as: model, to: handler)
-        }
+        let snapshot = try await query.build().getDocuments()
+        return unpackSnapshot(from: (snapshot, nil), as: model)
     }
     
     //MARK: - Listen documents
@@ -48,50 +45,48 @@ class DatabaseReader {
     func listenDocuments<T: Storable>(
         _ query: QueryBuilder<T>,
         as model: T.Type,
-        handler: @escaping ([Difference<T>]) -> Void
-    ){
+        handler: @escaping ([Difference<T>]) -> Void)
+    {
         query.rootPath(rootPath)
-        let listener = query.build().addSnapshotListener {
-            [self] (snapshot, error) in
-            unpackSnapshot(from: (snapshot, error), as: model, to: handler)
+        let listener = query.build().addSnapshotListener { snapshot, error in
+            let result = self.unpackSnapshot(from: (snapshot, error), as: model)
+            handler(result)
         }
         listeners.append(listener)
     }
     
     //MARK: - Unpack snapshot
+    // errors convert to empty results, so one bad formatted object doesn't
+    // lead to no data returned to the user
     
     private func unpackSnapshot<T: Storable>(
-        from result: (snapshot: QuerySnapshot?, error: Error?),
-        as model: T.Type,
-        to handler: @escaping ([Difference<T>]) -> Void
-    ){
-        guard let snapshot = result.snapshot else {
-            print(Errors.UnknownListenError(result.error))
-            handler([])
-            return
-        }
-        
-        var changes = [Difference<T>]()
-        for diff in snapshot.documentChanges {
-            do {
-                let object = try diff.document.data(as: model)
-                switch diff.type {
-                    case .added, .modified:
-                        changes.append(Difference(.Update, object))
-                    case .removed:
-                        changes.append(Difference(.Remove, object))
-                }
-            } catch {
-                print(Errors.DecodeModelError(diff.document.documentID, error))
-                continue
+        from input: (snapshot: QuerySnapshot?, error: Error?),
+        as model: T.Type) -> [Difference<T>]
+    {
+        if let error = input.error { print(error); return [] }
+        guard let changes = input.snapshot?.documentChanges else { return [] }
+
+        let results: [Difference<T>] = changes.compactMap { diff in
+            let result = Result { try diff.document.data(as: model) }
+            switch result {
+            case let .failure(error):
+                print(error)
+                return nil
+            case let .success(object):
+                return Difference(diff.type, object)
             }
         }
-        handler(changes)
+
+        return results
     }
     
     //MARK: - Difference
 
     struct Difference<T: Storable> {
+        enum Change {
+            case Set, Remove
+        }
+        
         let change: Change
         let object: T
         
@@ -100,16 +95,13 @@ class DatabaseReader {
             self.object = object
         }
         
-        enum Change {
-            case Update
-            case Remove
+        init(_ change: DocumentChangeType, _ object: T) {
+            switch change {
+            case .added, .modified:
+                self.init(.Set, object)
+            case .removed:
+                self.init(.Remove, object)
+            }
         }
-    }
-    
-    //MARK: - Errors
-    
-    enum Errors: Error {
-        case DecodeModelError(_ id: String, _ error: Error)
-        case UnknownListenError(_ error: Error?)
     }
 }

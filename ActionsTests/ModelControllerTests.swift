@@ -16,20 +16,14 @@ final class ModelControllerTests: XCTestCase {
     var testPath: String!
     var session: String!
     
-    override func setUpWithError() throws {
+    override func setUp() async throws {
         databaseWriter = DatabaseWriter()
         databaseReader = DatabaseReader()
         userId = UUID().uuidString
         session = UUID().uuidString
         
-        let semaphore = DispatchSemaphore(value: 1)
         let testId = try databaseWriter.create(as: Test.self, Test(userId, name, session))
-        DispatchQueue.main.async { [self] in
-            databaseWriter.execute() {
-                semaphore.signal()
-            }
-        }
-        semaphore.wait()
+        try await databaseWriter.execute()
         
         testPath = "tests/\(testId)/"
         databaseWriter.setRootPath(testPath)
@@ -38,13 +32,8 @@ final class ModelControllerTests: XCTestCase {
         modelController = ModelController(session, databaseReader, databaseWriter)
     }
     
-    override func tearDownWithError() throws {
-    }
-    
-    func testUserSameSessionUpdate() throws {
-        let expectation = expectation(description: #function)
-        modelController.setupUser(userId)
-        
-        waitForExpectations(timeout: 300)
+    func testUserSameSessionUpdate() async throws {
+        try await modelController.setupUser(userId)
+        XCTAssert(modelController.user!.userId == userId)
     }
 }

@@ -1,5 +1,5 @@
 //
-//  MemoryCache.swift
+//  LocalCache.swift
 //  Actions
 //
 //  Created by Josh Rutheiser on 1/1/23.
@@ -9,19 +9,19 @@ import Foundation
 
 //MARK: - Memory Cache Delegate
 
-protocol MemoryCacheDelegate {
+protocol LocalCacheDelegate {
     func userUpdated(_ user: User)
     func actionsUpdated(_ actions: [String: Action])
 }
 
 //MARK: - Memory Cache
 
-actor MemoryCache {
-    private(set) var user: User?
-    private(set) var actions: [String: Action]?
-    var delegate: MemoryCacheDelegate
+actor LocalCache {
+    var user: User?
+    var actions: [String: Action]?
+    var delegate: LocalCacheDelegate
     
-    init(delegate: MemoryCacheDelegate) {
+    init(delegate: LocalCacheDelegate) {
         self.delegate = delegate
     }
     

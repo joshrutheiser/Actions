@@ -10,10 +10,31 @@ import Firebase
 
 class ViewController: UIViewController {
     @IBOutlet weak var content: UIView!
-    var tableView = UITableView()
+    var databaseWriter: DatabaseWriter!
+    var databaseReader: DatabaseReader!
+    var model: ModelController!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        databaseWriter = DatabaseWriter()
+        databaseReader = DatabaseReader()
+        let userId = UUID().uuidString
+        let session = "session_\(UUID().uuidString)"
+        
+        model = ModelController(session, databaseReader, databaseWriter)
+        
+        Task {
+            try! await model.setupUser(userId)
+            
+            while true {
+                let user = await model.data.user!
+//                try! await Task.sleep(nanoseconds: 1000000)
+                print("\(Date().timeIntervalSince1970 * 1000): \(user.lastSession)")
+            }
+        }
+        
+        
         
 //        let openActions = Firestore.firestore().collection(Action.collection())
 //

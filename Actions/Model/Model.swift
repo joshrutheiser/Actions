@@ -48,6 +48,7 @@ struct User: Storable, Codable {
         case Personal = "Personal"
         case Work = "Work"
     }
+
 }
 
 //MARK: - Storable

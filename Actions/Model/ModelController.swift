@@ -8,7 +8,7 @@
 import Foundation
 
 class ModelController {
-    lazy var cache = MemoryCache(delegate: self)
+    lazy var data = LocalCache(delegate: self)
     var databaseReader: DatabaseReader
     var databaseWriter: DatabaseWriter
     let session: String
@@ -33,12 +33,12 @@ extension ModelController {
 
         let results = try await databaseReader.getDocuments(query, as: User.self)
         if let user = results.first?.object {
-            await cache.updateUser(user)
+            await data.updateUser(user)
         } else {
             var user = User(userId, session)
             let id = try databaseWriter.create(as: User.self, user)
             user.id = id
-            await cache.updateUser(user)
+            await data.updateUser(user)
             try await databaseWriter.execute()
         }
         
@@ -49,7 +49,7 @@ extension ModelController {
         databaseReader.listenDocuments(query, as: User.self) { results in
             guard let user = results.first?.object else { return }
             Task {
-                await self.cache.updateUser(user)
+                await self.data.updateUser(user)
             }
         }
     }
@@ -65,7 +65,7 @@ extension ModelController {
         
         databaseReader.listenDocuments(query, as: Action.self) { results in
             Task {
-                await self.cache.updateActions(results)
+                await self.data.updateActions(results)
             }
         }
     }
@@ -84,6 +84,14 @@ extension ModelController {
         _ rank: Int = 0) async throws -> String
     {
                 
+        
+        
+        
+        
+        
+        
+        
+        
         return ""
     }
     
@@ -96,6 +104,11 @@ extension ModelController {
         _ rank: Int = 0) async throws
     {
         
+        
+        
+        
+        
+        
     }
     
     //MARK: - Complete action
@@ -103,6 +116,12 @@ extension ModelController {
     func completeAction(
         _ actionId: String) async throws
     {
+        
+        
+        
+        
+        
+        
         
     }
     
@@ -112,9 +131,16 @@ extension ModelController {
         _ actionId: String) async throws
     {
         
+        
+        
+        
     }
     
     //MARK: - Clear today
+    
+    
+    
+    
     
     
     
@@ -122,12 +148,23 @@ extension ModelController {
     
     
     
+    
+    
+    
+    
+    
     //MARK: - Remove today
+    
+    
+    
+    
+    
+    
 }
 
 //MARK: - Cache delegate
 
-extension ModelController: MemoryCacheDelegate {
+extension ModelController: LocalCacheDelegate {
     
     func userUpdated(_ user: User) {
         print("USER UPDATED! \(user)")

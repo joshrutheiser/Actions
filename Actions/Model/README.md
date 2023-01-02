@@ -1,8 +1,7 @@
 
 # To do
 
-- memory cache (use actor to prevent data races?)
-- List model controller functions
+- Write function headers for controller functions
 - Write model controller tests
 - write firebase security rules for userId
 

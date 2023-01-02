@@ -79,29 +79,29 @@ class DatabaseReader {
 
         return results
     }
-    
-    //MARK: - Difference
+}
 
-    struct Difference<T: Storable> {
-        enum Change {
-            case Set, Remove
-        }
-        
-        let change: Change
-        let object: T
-        
-        init(_ change: Change, _ object: T) {
-            self.change = change
-            self.object = object
-        }
-        
-        init(_ change: DocumentChangeType, _ object: T) {
-            switch change {
-            case .added, .modified:
-                self.init(.Set, object)
-            case .removed:
-                self.init(.Remove, object)
-            }
+//MARK: - Difference
+
+struct Difference<T: Storable> {
+    enum Change {
+        case Set, Remove
+    }
+    
+    let change: Change
+    let object: T
+    
+    init(_ change: Change, _ object: T) {
+        self.change = change
+        self.object = object
+    }
+    
+    init(_ change: DocumentChangeType, _ object: T) {
+        switch change {
+        case .added, .modified:
+            self.init(.Set, object)
+        case .removed:
+            self.init(.Remove, object)
         }
     }
 }

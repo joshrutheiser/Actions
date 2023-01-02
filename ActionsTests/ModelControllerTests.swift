@@ -32,8 +32,15 @@ final class ModelControllerTests: XCTestCase {
         modelController = ModelController(session, databaseReader, databaseWriter)
     }
     
-    func testUserSameSessionUpdate() async throws {
+    func testCreateNewUser() async throws {
         try await modelController.setupUser(userId)
-        XCTAssert(modelController.user!.userId == userId)
+        let user = await modelController.cache.user
+        XCTAssert(user!.userId == userId)
+    }
+    
+    func testUpdateUser() async throws {
+        try await modelController.setupUser(userId)
+        let user = await modelController.cache.user
+        XCTAssert(user!.userId == userId)
     }
 }

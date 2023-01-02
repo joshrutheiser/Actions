@@ -8,6 +8,8 @@
 import Foundation
 import Firebase
 
+//MARK: - Query Builder
+
 class QueryBuilder<T: Storable> {
     var predicates = [NSPredicate]()
     var rootPath = ""

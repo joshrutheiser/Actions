@@ -17,6 +17,10 @@ struct Action: Storable, Codable {
     static func collection() -> String { "actions" }
     
     var text: String
+    var isCompleted = false
+    var isDeleted = false
+    var completedDate: Date?
+    var deletedDate: Date?
     
     init(_ userId: String, _ text: String, _ session: String) {
         self.userId = userId

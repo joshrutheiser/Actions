@@ -13,6 +13,7 @@
 		03DF651629601C9E000CF4B9 /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DF651529601C9E000CF4B9 /* Test.swift */; };
 		03DF65182960DE3B000CF4B9 /* ModelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DF65172960DE3B000CF4B9 /* ModelController.swift */; };
 		03DF651A2960E438000CF4B9 /* ModelControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DF65192960E438000CF4B9 /* ModelControllerTests.swift */; };
+		03DF651C296247DA000CF4B9 /* MemoryCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DF651B296247DA000CF4B9 /* MemoryCache.swift */; };
 		03EB9BE52959219400305E5D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EB9BE42959219400305E5D /* AppDelegate.swift */; };
 		03EB9BE72959219400305E5D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EB9BE62959219400305E5D /* SceneDelegate.swift */; };
 		03EB9BE92959219400305E5D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EB9BE82959219400305E5D /* ViewController.swift */; };
@@ -53,6 +54,7 @@
 		03DF651529601C9E000CF4B9 /* Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test.swift; sourceTree = "<group>"; };
 		03DF65172960DE3B000CF4B9 /* ModelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelController.swift; sourceTree = "<group>"; };
 		03DF65192960E438000CF4B9 /* ModelControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelControllerTests.swift; sourceTree = "<group>"; };
+		03DF651B296247DA000CF4B9 /* MemoryCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryCache.swift; sourceTree = "<group>"; };
 		03EB9BE12959219400305E5D /* Actions.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Actions.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		03EB9BE42959219400305E5D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		03EB9BE62959219400305E5D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -158,6 +160,7 @@
 			children = (
 				03EB9C17295921D200305E5D /* Model.swift */,
 				03DF65172960DE3B000CF4B9 /* ModelController.swift */,
+				03DF651B296247DA000CF4B9 /* MemoryCache.swift */,
 				03EB9C202959248D00305E5D /* DatabaseWriter.swift */,
 				03A5A0AD295ED7010034D978 /* DatabaseReader.swift */,
 				03DF6513295FFC03000CF4B9 /* QueryBuilder.swift */,
@@ -306,6 +309,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				03DF651C296247DA000CF4B9 /* MemoryCache.swift in Sources */,
 				03EB9C212959248D00305E5D /* DatabaseWriter.swift in Sources */,
 				03EB9BE92959219400305E5D /* ViewController.swift in Sources */,
 				03DF65182960DE3B000CF4B9 /* ModelController.swift in Sources */,

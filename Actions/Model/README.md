@@ -1,9 +1,7 @@
 
 # To do
 
-- Caching design
-- Dispach async functions to background thread
-    to prevent data races
+- memory cache (use actor to prevent data races?)
 - List model controller functions
 - Write model controller tests
 - write firebase security rules for userId

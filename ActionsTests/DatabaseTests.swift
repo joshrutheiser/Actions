@@ -23,7 +23,7 @@ class DatabaseTests: XCTestCase {
         session = "session_\(UUID().uuidString)"
         
         let testId = try databaseWriter.create(as: Test.self, Test(userId, name, session))
-        try await databaseWriter.execute()
+        try await databaseWriter.commit()
         
         testPath = "tests/\(testId)/"
         databaseWriter.setRootPath(testPath)
@@ -42,7 +42,7 @@ class DatabaseTests: XCTestCase {
     
     func testCreateUser() async throws {
         let id = try databaseWriter.create(as: User.self, User(userId, session))
-        try await databaseWriter.execute()
+        try await databaseWriter.commit()
         
         let query = QueryBuilder(User.self).user(userId)
         let results = try await databaseReader.getDocuments(query, as: User.self)
@@ -70,7 +70,7 @@ class DatabaseTests: XCTestCase {
             }
         }
         
-        try await databaseWriter.execute()
+        try await databaseWriter.commit()
         await waitForExpectations(timeout: 5, handler: nil)
     }
     
@@ -79,10 +79,10 @@ class DatabaseTests: XCTestCase {
     func testUserUpdate() async throws {
         var user = User(userId, session)
         let id = try databaseWriter.create(as: User.self, user)
-        try await databaseWriter.execute()
+        try await databaseWriter.commit()
 
         user.id = id
-        user.currentMode = .Work
+        user.currentMode = Mode.Work.rawValue
         try databaseWriter.update(as: User.self, user)
 
         var count = 0
@@ -95,11 +95,11 @@ class DatabaseTests: XCTestCase {
                 XCTAssertEqual(results.first!.change, .Set)
                 XCTAssertEqual(results.first!.object.id, id)
                 XCTAssertEqual(results.first!.object.userId, userId)
-                XCTAssertEqual(results.first!.object.currentMode, .Work)
+                XCTAssertEqual(results.first!.object.currentMode, Mode.Work.rawValue)
                 exp.fulfill()
             }
         }
-        try await databaseWriter.execute()
+        try await databaseWriter.commit()
         await waitForExpectations(timeout: 5, handler: nil)
     }
 
@@ -111,7 +111,7 @@ class DatabaseTests: XCTestCase {
         let _ = try databaseWriter.create(as: Action.self, Action(userId, "1", session))
         let id2 = try databaseWriter.create(as: Action.self, action)
         let _ = try databaseWriter.create(as: Action.self, Action(userId, "3", session))
-        try await databaseWriter.execute()
+        try await databaseWriter.commit()
 
         var count = 0
         let query = QueryBuilder(Action.self).user(userId)
@@ -129,7 +129,7 @@ class DatabaseTests: XCTestCase {
         action.id = id2
         action.userId = ""
         try databaseWriter.update(as: Action.self, action)
-        try await databaseWriter.execute()
+        try await databaseWriter.commit()
         
         await waitForExpectations(timeout: 5, handler: nil)
     }
@@ -140,7 +140,7 @@ class DatabaseTests: XCTestCase {
         let id1 = try databaseWriter.create(as: Action.self, Action(userId, "1", session))
         let id2 = try databaseWriter.create(as: Action.self, Action(userId, "2", session))
         let id3 = try databaseWriter.create(as: Action.self, Action(userId, "3", session))
-        try await databaseWriter.execute()
+        try await databaseWriter.commit()
 
         let query = QueryBuilder(Action.self).user(userId)
         let results = try await databaseReader.getDocuments(query, as: Action.self)
@@ -159,12 +159,12 @@ class DatabaseTests: XCTestCase {
         let id1 = try databaseWriter.create(as: Action.self, Action(userId, "1", session))
         let id2 = try databaseWriter.create(as: Action.self, action)
         let id3 = try databaseWriter.create(as: Action.self, Action(userId, "3", session))
-        try await databaseWriter.execute()
+        try await databaseWriter.commit()
         
         action.id = id2
         action.userId = ""
         try databaseWriter.update(as: Action.self, action)
-        try await databaseWriter.execute()
+        try await databaseWriter.commit()
 
         let query = QueryBuilder(Action.self).user(userId)
         let results = try await databaseReader.getDocuments(query, as: Action.self)

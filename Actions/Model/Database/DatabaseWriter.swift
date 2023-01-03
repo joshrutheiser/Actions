@@ -15,6 +15,7 @@ class DatabaseWriter {
     private var firestore: Firestore
     private var writeBatch: WriteBatch
     private var rootPath: String
+    private var cache: LocalCache?
     
     init() {
         rootPath = ""
@@ -50,7 +51,7 @@ class DatabaseWriter {
     
     //MARK: - execute
     
-    func execute() async throws {
+    func commit() async throws {
         try await writeBatch.commit()
         reset()
     }

@@ -14,34 +14,60 @@ struct Action: Storable, Codable {
     @DocumentID var id: String?
     var userId: String
     var lastSession: String
+    var createdDate = Date()
+    var lastUpdatedDate = Date()
     static func collection() -> String { "actions" }
     
     var text: String
+    var parentId: String?
+    var childIds = [String]()
+    var scheduledDate: Date?
+    var skipped = 0
     var isCompleted = false
     var isDeleted = false
     var completedDate: Date?
     var deletedDate: Date?
     
-    init(_ userId: String, _ text: String, _ session: String) {
+    init(_ userId: String,
+        _ text: String,
+        _ session: String,
+        _ parentId: String? = nil)
+    {
         self.userId = userId
         self.text = text
         lastSession = session
+        self.parentId = parentId
     }
 }
 
 //MARK: - User
+typealias Mode = User.Mode
 
 struct User: Storable, Codable {
     @DocumentID var id: String?
     var userId: String
     var lastSession: String
+    var createdDate = Date()
+    var lastUpdatedDate = Date()
     static func collection() -> String { "users" }
     
-    var currentMode: Mode = .Personal
-
+    var currentMode: String
+    var today: [String: [String]]
+    var backlog: [String: [String]]
+    
     init(_ userId: String, _ session: String) {
         self.userId = userId
         lastSession = session
+        
+        currentMode = Mode.Personal.rawValue
+        today = [
+            Mode.Personal.rawValue: [String](),
+            Mode.Work.rawValue: [String]()
+        ]
+        backlog = [
+            Mode.Personal.rawValue: [String](),
+            Mode.Work.rawValue: [String]()
+        ]
     }
     
     enum Mode: String, Codable {
@@ -57,5 +83,7 @@ protocol Storable: Codable {
     var id: String? { get set }
     var userId: String { get set }
     var lastSession: String { get set }
+    var createdDate: Date { get set }
+    var lastUpdatedDate: Date { get set }
     static func collection() -> String
 }

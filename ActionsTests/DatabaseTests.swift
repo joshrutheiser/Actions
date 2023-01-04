@@ -20,7 +20,7 @@ class DatabaseTests: XCTestCase {
         databaseWriter = DatabaseWriter()
         databaseReader = DatabaseReader()
         userId = UUID().uuidString
-        session = "session_\(UUID().uuidString)"
+        session = UUID().uuidString
         
         let testId = try databaseWriter.create(as: Test.self, Test(userId, name, session))
         try await databaseWriter.commit()
@@ -33,7 +33,8 @@ class DatabaseTests: XCTestCase {
     //MARK: - User not created
 
     func testUserNotCreated() async throws {
-        let query = QueryBuilder(User.self).user(userId)
+        let query = QueryBuilder(User.self)
+            .whereField("userId", isEqualTo: userId)
         let results = try await databaseReader.getDocuments(query, as: User.self)
         XCTAssertTrue(results.isEmpty)
     }
@@ -41,10 +42,11 @@ class DatabaseTests: XCTestCase {
     //MARK: - Create user
     
     func testCreateUser() async throws {
-        let id = try databaseWriter.create(as: User.self, User(userId, session))
+        let id = try databaseWriter.create(as: User.self, User(userId))
         try await databaseWriter.commit()
         
-        let query = QueryBuilder(User.self).user(userId)
+        let query = QueryBuilder(User.self)
+            .whereField("userId", isEqualTo: userId)
         let results = try await databaseReader.getDocuments(query, as: User.self)
         
         XCTAssert(results.count == 1)
@@ -56,8 +58,9 @@ class DatabaseTests: XCTestCase {
     //MARK: - User listener
     
     func testUserListener() async throws {
-        let id = try databaseWriter.create(as: User.self, User(userId, session))
-        let query = QueryBuilder(User.self).user(userId)
+        let id = try databaseWriter.create(as: User.self, User(userId, session: session))
+        let query = QueryBuilder(User.self)
+            .whereField("userId", isEqualTo: userId)
         
         let exp = expectation(description: #function)
         databaseReader.listenDocuments(query, as: User.self) { [self] results in
@@ -77,7 +80,7 @@ class DatabaseTests: XCTestCase {
     //MARK: - User update
     
     func testUserUpdate() async throws {
-        var user = User(userId, session)
+        var user = User(userId, session: session)
         let id = try databaseWriter.create(as: User.self, user)
         try await databaseWriter.commit()
 
@@ -86,7 +89,8 @@ class DatabaseTests: XCTestCase {
         try databaseWriter.update(as: User.self, user)
 
         var count = 0
-        let query = QueryBuilder(User.self).user(userId)
+        let query = QueryBuilder(User.self)
+            .whereField("userId", isEqualTo: userId)
         let exp = expectation(description: #function)
         databaseReader.listenDocuments(query, as: User.self) { [self] results in
             count += 1
@@ -107,14 +111,15 @@ class DatabaseTests: XCTestCase {
 
     func testRemoveFromListener() async throws {
 
-        var action = Action(userId, "2", session)
-        let _ = try databaseWriter.create(as: Action.self, Action(userId, "1", session))
+        var action = Action(userId, "2", session: session)
+        let _ = try databaseWriter.create(as: Action.self, Action(userId, "1", session: session))
         let id2 = try databaseWriter.create(as: Action.self, action)
-        let _ = try databaseWriter.create(as: Action.self, Action(userId, "3", session))
+        let _ = try databaseWriter.create(as: Action.self, Action(userId, "3", session: session))
         try await databaseWriter.commit()
 
         var count = 0
-        let query = QueryBuilder(Action.self).user(userId)
+        let query = QueryBuilder(Action.self)
+            .whereField("userId", isEqualTo: userId)
         let exp = expectation(description: #function)
         databaseReader.listenDocuments(query, as: Action.self) { results in
             count += 1
@@ -137,12 +142,13 @@ class DatabaseTests: XCTestCase {
     //MARK: Create multiple actions
 
     func testCreateMultipleActions() async throws {
-        let id1 = try databaseWriter.create(as: Action.self, Action(userId, "1", session))
-        let id2 = try databaseWriter.create(as: Action.self, Action(userId, "2", session))
-        let id3 = try databaseWriter.create(as: Action.self, Action(userId, "3", session))
+        let id1 = try databaseWriter.create(as: Action.self, Action(userId, "1", session: session))
+        let id2 = try databaseWriter.create(as: Action.self, Action(userId, "2", session: session))
+        let id3 = try databaseWriter.create(as: Action.self, Action(userId, "3", session: session))
         try await databaseWriter.commit()
 
-        let query = QueryBuilder(Action.self).user(userId)
+        let query = QueryBuilder(Action.self)
+            .whereField("userId", isEqualTo: userId)
         let results = try await databaseReader.getDocuments(query, as: Action.self)
         XCTAssert(results.count == 3)
         for result in results {
@@ -155,10 +161,10 @@ class DatabaseTests: XCTestCase {
     //MARK: - Remove from get docs
 
     func testRemoveFromGetDocs() async throws {
-        var action = Action(userId, "2", session)
-        let id1 = try databaseWriter.create(as: Action.self, Action(userId, "1", session))
+        var action = Action(userId, "2", session: session)
+        let id1 = try databaseWriter.create(as: Action.self, Action(userId, "1", session: session))
         let id2 = try databaseWriter.create(as: Action.self, action)
-        let id3 = try databaseWriter.create(as: Action.self, Action(userId, "3", session))
+        let id3 = try databaseWriter.create(as: Action.self, Action(userId, "3", session: session))
         try await databaseWriter.commit()
         
         action.id = id2
@@ -166,7 +172,8 @@ class DatabaseTests: XCTestCase {
         try databaseWriter.update(as: Action.self, action)
         try await databaseWriter.commit()
 
-        let query = QueryBuilder(Action.self).user(userId)
+        let query = QueryBuilder(Action.self)
+            .whereField("userId", isEqualTo: userId)
         let results = try await databaseReader.getDocuments(query, as: Action.self)
         
         XCTAssertEqual(results.count, 2)

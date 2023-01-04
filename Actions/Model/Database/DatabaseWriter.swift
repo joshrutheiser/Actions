@@ -9,13 +9,12 @@ import Foundation
 import Firebase
 import FirebaseFirestoreSwift
 
-//MARK: - Database Write
+//MARK: - Database Writer
 
 class DatabaseWriter {
     private var firestore: Firestore
     private var writeBatch: WriteBatch
     private var rootPath: String
-    private var cache: LocalCache?
     
     init() {
         rootPath = ""

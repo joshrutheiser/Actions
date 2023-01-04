@@ -8,20 +8,20 @@
 import XCTest
 @testable import Actions
 
-final class ModelControllerTests: XCTestCase {
-    var userId: String!
-    var databaseWriter: DatabaseWriter!
-    var databaseReader: DatabaseReader!
+final class ModelControllerTests: XCTestCase, LocalCacheDelegate {
+    var config: DataSyncConfig!
     var model: ModelController!
     var testPath: String!
+    var userId: String!
     var session: String!
     
     override func setUp() async throws {
-        databaseWriter = DatabaseWriter()
-        databaseReader = DatabaseReader()
-        userId = UUID().uuidString
+        let databaseWriter = DatabaseWriter()
+        let databaseReader = DatabaseReader()
         session = UUID().uuidString
+        userId = UUID().uuidString
         
+        // create test parent doc
         let testId = try databaseWriter.create(as: Test.self, Test(userId, name, session))
         try await databaseWriter.commit()
         
@@ -29,12 +29,28 @@ final class ModelControllerTests: XCTestCase {
         databaseWriter.setRootPath(testPath)
         databaseReader.setRootPath(testPath)
         
-        model = ModelController(session, databaseReader, databaseWriter)
-        try await model.setup(userId)
+        let config = DataSyncConfig (
+            databaseWriter: databaseWriter,
+            databaseReader: databaseReader,
+            cache: LocalCache(self),
+            session: session,
+            userId: userId
+        )
+        
+        model = ModelController(config)
+        try await model.load()
+    }
+    
+    func userUpdated() {
+        print("user updated")
+    }
+    
+    func actionsUpdated() {
+        print("actions updated")
     }
     
     func testCreateNewUser() async throws {
-        let user = await model.data.user!
+        let user = try await model.getUser()
         XCTAssert(user.userId == userId)
     }
     

@@ -2,6 +2,12 @@
 # To do
 
 - Brainstorm ways to break down ModelController into sub controllers
+
+
+
+
+
+
 - Write model controller tests
 - write firebase security rules for userId
 

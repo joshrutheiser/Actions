@@ -8,7 +8,7 @@
 import Firebase
 import FirebaseFirestoreSwift
 
-//MARK: - Database Listen
+//MARK: - Database Reader
 
 class DatabaseReader {
     private var firestore: Firestore

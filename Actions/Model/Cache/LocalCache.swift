@@ -10,8 +10,8 @@ import Foundation
 //MARK: - Local Cache Delegate
 
 protocol LocalCacheDelegate {
-    func userUpdated(_ user: User)
-    func actionsUpdated(_ actions: [String: Action])
+    func userUpdated()
+    func actionsUpdated()
 }
 
 //MARK: - Local Cache
@@ -33,7 +33,7 @@ actor LocalCache {
     
     func setUserNotify(_ user: User) {
         self.user = user
-        delegate.userUpdated(user)
+        delegate.userUpdated()
     }
 
     //MARK: - Set action
@@ -57,7 +57,7 @@ actor LocalCache {
             }
         }
         
-        delegate.actionsUpdated(actions!)
+        delegate.actionsUpdated()
     }
     
     //MARK: - Remove action
@@ -66,7 +66,7 @@ actor LocalCache {
         initActions()
         guard let id = action.id else { return }
         actions![id] = nil
-        delegate.actionsUpdated(actions!)
+        delegate.actionsUpdated()
     }
     
     private func initActions() {

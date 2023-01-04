@@ -26,11 +26,6 @@ class QueryBuilder<T: Storable> {
     }
     
     @discardableResult
-    func user(_ userId: String) -> Self {
-        return whereField("userId", isEqualTo: userId)
-    }
-    
-    @discardableResult
     func whereField(_ field: String, isEqualTo value: Bool) -> Self {
         let predicate = NSPredicate(format: "\(field) == %d", value ? "YES" : "NO")
         predicates.append(predicate)

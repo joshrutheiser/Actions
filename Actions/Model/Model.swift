@@ -13,7 +13,7 @@ import FirebaseFirestoreSwift
 struct Action: Storable, Codable {
     @DocumentID var id: String?
     var userId: String
-    var lastSession: String
+    var lastSession: String?
     var createdDate = Date()
     var lastUpdatedDate = Date()
     static func collection() -> String { "actions" }
@@ -29,14 +29,14 @@ struct Action: Storable, Codable {
     var deletedDate: Date?
     
     init(_ userId: String,
-        _ text: String,
-        _ session: String,
-        _ parentId: String? = nil)
+         _ text: String,
+         _ parentId: String? = nil,
+         session: String? = nil)
     {
         self.userId = userId
         self.text = text
-        lastSession = session
         self.parentId = parentId
+        lastSession = session
     }
 }
 
@@ -46,7 +46,7 @@ typealias Mode = User.Mode
 struct User: Storable, Codable {
     @DocumentID var id: String?
     var userId: String
-    var lastSession: String
+    var lastSession: String?
     var createdDate = Date()
     var lastUpdatedDate = Date()
     static func collection() -> String { "users" }
@@ -55,7 +55,9 @@ struct User: Storable, Codable {
     var today: [String: [String]]
     var backlog: [String: [String]]
     
-    init(_ userId: String, _ session: String) {
+    init(_ userId: String,
+         session: String? = nil)
+    {
         self.userId = userId
         lastSession = session
         
@@ -82,7 +84,7 @@ struct User: Storable, Codable {
 protocol Storable: Codable {
     var id: String? { get set }
     var userId: String { get set }
-    var lastSession: String { get set }
+    var lastSession: String? { get set }
     var createdDate: Date { get set }
     var lastUpdatedDate: Date { get set }
     static func collection() -> String

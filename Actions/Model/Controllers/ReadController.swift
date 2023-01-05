@@ -78,21 +78,15 @@ class ReadController {
         return user
     }
     
+    func getMode() async throws -> String {
+        let user = try await getUser()
+        return user.currentMode
+    }
+    
     func getBacklog() async throws -> [String]? {
         let user = try await getUser()
         let mode = try await getMode()
         return user.backlog[mode]
-    }
-    
-    func getToday() async throws -> [String]? {
-        let user = try await getUser()
-        let mode = try await getMode()
-        return user.today[mode]
-    }
-    
-    func getMode() async throws -> String {
-        let user = try await getUser()
-        return user.currentMode
     }
     
 }

@@ -52,7 +52,6 @@ struct User: Storable, Codable {
     static func collection() -> String { "users" }
     
     var currentMode: String
-    var today: [String: [String]]
     var backlog: [String: [String]]
     
     init(userId: String? = nil,
@@ -62,10 +61,6 @@ struct User: Storable, Codable {
         lastSession = session
         
         currentMode = Mode.Personal.rawValue
-        today = [
-            Mode.Personal.rawValue: [String](),
-            Mode.Work.rawValue: [String]()
-        ]
         backlog = [
             Mode.Personal.rawValue: [String](),
             Mode.Work.rawValue: [String]()

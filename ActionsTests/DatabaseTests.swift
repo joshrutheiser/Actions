@@ -42,7 +42,8 @@ class DatabaseTests: XCTestCase {
     //MARK: - Create user
     
     func testCreateUser() async throws {
-        let id = try databaseWriter.create(as: User.self, User(userId))
+        let user = User(userId: userId, session: session)
+        let id = try databaseWriter.create(as: User.self, user)
         try await databaseWriter.commit()
         
         let query = QueryBuilder(User.self)
@@ -58,7 +59,7 @@ class DatabaseTests: XCTestCase {
     //MARK: - User listener
     
     func testUserListener() async throws {
-        let id = try databaseWriter.create(as: User.self, User(userId, session: session))
+        let id = try databaseWriter.create(as: User.self, User(userId: userId, session: session))
         let query = QueryBuilder(User.self)
             .whereField("userId", isEqualTo: userId)
         
@@ -80,7 +81,7 @@ class DatabaseTests: XCTestCase {
     //MARK: - User update
     
     func testUserUpdate() async throws {
-        var user = User(userId, session: session)
+        var user = User(userId: userId, session: session)
         let id = try databaseWriter.create(as: User.self, user)
         try await databaseWriter.commit()
 
@@ -111,10 +112,10 @@ class DatabaseTests: XCTestCase {
 
     func testRemoveFromListener() async throws {
 
-        var action = Action(userId, "2", session: session)
-        let _ = try databaseWriter.create(as: Action.self, Action(userId, "1", session: session))
+        var action = Action("2", userId: userId, session: session)
+        let _ = try databaseWriter.create(as: Action.self, Action("1", userId: userId, session: session))
         let id2 = try databaseWriter.create(as: Action.self, action)
-        let _ = try databaseWriter.create(as: Action.self, Action(userId, "3", session: session))
+        let _ = try databaseWriter.create(as: Action.self, Action("3", userId: userId, session: session))
         try await databaseWriter.commit()
 
         var count = 0
@@ -142,9 +143,9 @@ class DatabaseTests: XCTestCase {
     //MARK: Create multiple actions
 
     func testCreateMultipleActions() async throws {
-        let id1 = try databaseWriter.create(as: Action.self, Action(userId, "1", session: session))
-        let id2 = try databaseWriter.create(as: Action.self, Action(userId, "2", session: session))
-        let id3 = try databaseWriter.create(as: Action.self, Action(userId, "3", session: session))
+        let id1 = try databaseWriter.create(as: Action.self, Action("1", userId: userId, session: session))
+        let id2 = try databaseWriter.create(as: Action.self, Action("2", userId: userId, session: session))
+        let id3 = try databaseWriter.create(as: Action.self, Action("3", userId: userId, session: session))
         try await databaseWriter.commit()
 
         let query = QueryBuilder(Action.self)
@@ -161,10 +162,10 @@ class DatabaseTests: XCTestCase {
     //MARK: - Remove from get docs
 
     func testRemoveFromGetDocs() async throws {
-        var action = Action(userId, "2", session: session)
-        let id1 = try databaseWriter.create(as: Action.self, Action(userId, "1", session: session))
+        var action = Action("2", userId: userId, session: session)
+        let id1 = try databaseWriter.create(as: Action.self, Action("1", userId: userId, session: session))
         let id2 = try databaseWriter.create(as: Action.self, action)
-        let id3 = try databaseWriter.create(as: Action.self, Action(userId, "3", session: session))
+        let id3 = try databaseWriter.create(as: Action.self, Action("3", userId: userId, session: session))
         try await databaseWriter.commit()
         
         action.id = id2

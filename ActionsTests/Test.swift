@@ -11,7 +11,7 @@ import FirebaseFirestoreSwift
 
 struct Test: Storable, Codable {
     @DocumentID var id: String?
-    var userId: String
+    var userId: String?
     var lastSession: String?
     var createdDate = Date()
     var lastUpdatedDate = Date()

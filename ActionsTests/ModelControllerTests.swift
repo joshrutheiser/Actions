@@ -41,24 +41,24 @@ final class ModelControllerTests: XCTestCase, LocalCacheDelegate {
         try await model.load()
     }
     
-    func userUpdated() {
+    func userUpdated(_ user: User) {
         print("user updated")
     }
     
-    func actionsUpdated() {
+    func actionsUpdated(_ actions: [String: Action]) {
         print("actions updated")
     }
     
     func testCreateNewUser() async throws {
-        let user = try await model.getUser()
+        let user = try await model.read.getUser()
         XCTAssert(user.userId == userId)
     }
     
     func testCreateActionInBacklog() async throws {
-        let actionId = try await model.createAction("Testing")!
-        let user = try await model.getUser()
-        let action = try await model.getAction(actionId)
-        let backlog = try await model.getBacklog()
+        let actionId = try await model.write.createAction("Testing")!
+        let user = try await model.read.getUser()
+        let action = try await model.read.getAction(actionId)
+        let backlog = try await model.read.getBacklog()
         XCTAssertNotNil(user)
         XCTAssertNotNil(action)
         XCTAssertNotNil(backlog)
@@ -67,10 +67,10 @@ final class ModelControllerTests: XCTestCase, LocalCacheDelegate {
     }
     
     func testCreateActionInBacklog_Multiple() async throws {
-        let id1 = try await model.createAction("1")!
-        let id2 = try await model.createAction("2")!
-        let id3 = try await model.createAction("3")!
-        let backlog = try await model.getBacklog()
+        let id1 = try await model.write.createAction("1")!
+        let id2 = try await model.write.createAction("2")!
+        let id3 = try await model.write.createAction("3")!
+        let backlog = try await model.read.getBacklog()
         XCTAssertNotNil(backlog)
         XCTAssertEqual(backlog!.count, 3)
         XCTAssertEqual(backlog![0], id3)
@@ -79,11 +79,11 @@ final class ModelControllerTests: XCTestCase, LocalCacheDelegate {
     }
     
     func testCreateRankedActionInBacklog() async throws {
-        let id1 = try await model.createAction("1")!
-        let id2 = try await model.createAction("2")!
-        let id3 = try await model.createAction("3")!
-        let id4 = try await model.createAction("4", rank: 2)
-        let backlog = try await model.getBacklog()
+        let id1 = try await model.write.createAction("1")!
+        let id2 = try await model.write.createAction("2")!
+        let id3 = try await model.write.createAction("3")!
+        let id4 = try await model.write.createAction("4", rank: 2)
+        let backlog = try await model.read.getBacklog()
         XCTAssertNotNil(backlog)
         XCTAssertEqual(backlog!.count, 4)
         XCTAssertEqual(backlog![0], id3)
@@ -93,10 +93,10 @@ final class ModelControllerTests: XCTestCase, LocalCacheDelegate {
     }
     
     func testCreateRankedActionInBacklog_OutOfBounds() async throws {
-        let _ = try await model.createAction("1")!
+        let _ = try await model.write.createAction("1")!
         
         do {
-            let _ = try await model.createAction("2", rank: 3)
+            let _ = try await model.write.createAction("2", rank: 3)
             XCTAssert(false)
         } catch {
             XCTAssert(true)
@@ -104,17 +104,17 @@ final class ModelControllerTests: XCTestCase, LocalCacheDelegate {
     }
     
     func testCreateParentChildAction() async throws {
-        let id1 = try await model.createAction("1")!
-        let id2 = try await model.createAction("a", parentId: id1)!
-        let id3 = try await model.createAction("b", parentId: id1, rank: 1)!
+        let id1 = try await model.write.createAction("1")!
+        let id2 = try await model.write.createAction("a", parentId: id1)!
+        let id3 = try await model.write.createAction("b", parentId: id1, rank: 1)!
         
-        let backlog = try await model.getBacklog()
+        let backlog = try await model.read.getBacklog()
         XCTAssertEqual(backlog!.count, 1)
         XCTAssertEqual(backlog![0], id1)
         
-        let parent = try await model.getAction(id1)
-        let child1 = try await model.getAction(id2)
-        let child2 = try await model.getAction(id3)
+        let parent = try await model.read.getAction(id1)
+        let child1 = try await model.read.getAction(id2)
+        let child2 = try await model.read.getAction(id3)
         XCTAssertEqual(parent.childIds.count, 2)
         XCTAssertEqual(parent.childIds[0], id2)
         XCTAssertEqual(parent.childIds[1], id3)
@@ -122,5 +122,124 @@ final class ModelControllerTests: XCTestCase, LocalCacheDelegate {
         XCTAssertEqual(child2.parentId!, id1)
     }
     
+    func testMoveActionInBacklog() async throws {
+        let id1 = try await model.write.createAction("1", rank: 0)!
+        let id2 = try await model.write.createAction("2", rank: 1)!
+        let id3 = try await model.write.createAction("3", rank: 2)!
+
+        try await model.write.moveAction(id3, rank: 0) // 0=id3, 1=id1, 2=id2
+        
+        let backlog = try await model.read.getBacklog()!
+        XCTAssertEqual(backlog[0], id3)
+        XCTAssertEqual(backlog[1], id1)
+        XCTAssertEqual(backlog[2], id2)
+    }
     
+    func testMoveActionOutOfBounds() async throws {
+        let id1 = try await model.write.createAction("1", rank: 0)!
+        
+        do {
+            try await model.write.moveAction(id1, rank: 1)
+            XCTAssert(false)
+        } catch {
+            XCTAssert(true)
+        }
+    }
+    
+    func testMoveChildInParent() async throws {
+        let id = try await model.write.createAction("Parent")!
+        let id1 = try await model.write
+            .createAction("1", parentId: id, rank: 0)!
+        let id2 = try await model.write
+            .createAction("2", parentId: id, rank: 1)!
+        let id3 = try await model.write
+            .createAction("3", parentId: id, rank: 2)!
+        
+        try await model.write.moveAction(id3, rank: 1) // 0=id1, 1=id3, 2=id2
+        
+        let children = try await model.read.getChildActionIds(id)!
+        XCTAssertEqual(children[0], id1)
+        XCTAssertEqual(children[1], id3)
+        XCTAssertEqual(children[2], id2)
+    }
+    
+    func testMoveParentToChild() async throws {
+        let idA = try await model.write.createAction("ParentA")!
+        let idB = try await model.write.createAction("ParentB")!
+        let id1 = try await model.write
+            .createAction("1", parentId: idA, rank: 0)!
+        let id2 = try await model.write
+            .createAction("2", parentId: idA, rank: 1)!
+        let id3 = try await model.write
+            .createAction("3", parentId: idA, rank: 2)!
+        
+        try await model.write.moveActionTo(idB, parentId: idA, rank: 1)
+        
+        let children = try await model.read.getChildActionIds(idA)!
+        XCTAssertEqual(children[0], id1)
+        XCTAssertEqual(children[1], idB) // ParentB
+        XCTAssertEqual(children[2], id2)
+        XCTAssertEqual(children[3], id3)
+        
+        // check that ParentB is no longer in backlog
+        let backlog = try await model.read.getBacklog()!
+        XCTAssertEqual(backlog.count, 1)
+        XCTAssertEqual(backlog[0], idA)
+        
+        // check that parent of ParentB is ParentA
+        let parentB = try await model.read.getAction(idB)
+        XCTAssertEqual(parentB.parentId, idA)
+    }
+    
+    func testMoveChildToParent() async throws {
+        let idA = try await model.write.createAction("ParentA")!
+        let idB = try await model.write.createAction("ParentB")!
+        let id1 = try await model.write
+            .createAction("1", parentId: idA, rank: 0)!
+        let id2 = try await model.write
+            .createAction("2", parentId: idA, rank: 1)!
+        let id3 = try await model.write
+            .createAction("3", parentId: idA, rank: 2)!
+        
+        try await model.write.moveActionTo(id3, parentId: idB)
+        
+        let childrenA = try await model.read.getChildActionIds(idA)!
+        XCTAssertEqual(childrenA.count, 2)
+        XCTAssertEqual(childrenA[0], id1)
+        XCTAssertEqual(childrenA[1], id2)
+        
+        let childrenB = try await model.read.getChildActionIds(idB)!
+        XCTAssertEqual(childrenB.count, 1)
+        XCTAssertEqual(childrenB[0], id3)
+        
+        // check that parent of id3 is ParentB
+        let action3 = try await model.read.getAction(id3)
+        XCTAssertEqual(action3.parentId, idB)
+    }
+    
+    func testMoveChildToBacklog() async throws {
+        let idA = try await model.write.createAction("ParentA")!
+        let id1 = try await model.write
+            .createAction("1", parentId: idA, rank: 0)!
+        let id2 = try await model.write
+            .createAction("2", parentId: idA, rank: 1)!
+        let id3 = try await model.write
+            .createAction("3", parentId: idA, rank: 2)!
+        
+        try await model.write.moveActionTo(id3, parentId: nil)
+        
+        let childrenA = try await model.read.getChildActionIds(idA)!
+        XCTAssertEqual(childrenA.count, 2)
+        XCTAssertEqual(childrenA[0], id1)
+        XCTAssertEqual(childrenA[1], id2)
+        
+        let backlog = try await model.read.getBacklog()!
+        XCTAssertEqual(backlog.count, 2)
+        XCTAssertEqual(backlog[0], id3)
+        XCTAssertEqual(backlog[1], idA)
+        
+        // check that parent of id3 is nil
+        let action3 = try await model.read.getAction(id3)
+        XCTAssertEqual(action3.parentId, nil)
+    }
 }

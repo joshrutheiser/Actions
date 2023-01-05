@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0346E0962965741200C25FBD /* ModelController+Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0346E0952965741200C25FBD /* ModelController+Errors.swift */; };
+		0346E099296640A100C25FBD /* WriteController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0346E098296640A100C25FBD /* WriteController.swift */; };
+		0346E09B296640AA00C25FBD /* ReadController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0346E09A296640AA00C25FBD /* ReadController.swift */; };
+		0346E09F2966AE6C00C25FBD /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0346E09E2966AE6C00C25FBD /* Errors.swift */; };
 		03A5A0AE295ED7010034D978 /* DatabaseReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A5A0AD295ED7010034D978 /* DatabaseReader.swift */; };
 		03A5A0B0295EE24B0034D978 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 03A5A0AF295EE24B0034D978 /* README.md */; };
 		03DF6514295FFC03000CF4B9 /* QueryBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DF6513295FFC03000CF4B9 /* QueryBuilder.swift */; };
@@ -16,7 +18,6 @@
 		03DF651A2960E438000CF4B9 /* ModelControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DF65192960E438000CF4B9 /* ModelControllerTests.swift */; };
 		03DF651C296247DA000CF4B9 /* LocalCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DF651B296247DA000CF4B9 /* LocalCache.swift */; };
 		03DF65232963E748000CF4B9 /* DataSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DF65222963E748000CF4B9 /* DataSync.swift */; };
-		03DF65252963EC4B000CF4B9 /* ModelController+Get.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DF65242963EC4B000CF4B9 /* ModelController+Get.swift */; };
 		03EB9BE52959219400305E5D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EB9BE42959219400305E5D /* AppDelegate.swift */; };
 		03EB9BE72959219400305E5D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EB9BE62959219400305E5D /* SceneDelegate.swift */; };
 		03EB9BE92959219400305E5D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EB9BE82959219400305E5D /* ViewController.swift */; };
@@ -51,7 +52,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0346E0952965741200C25FBD /* ModelController+Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModelController+Errors.swift"; sourceTree = "<group>"; };
+		0346E098296640A100C25FBD /* WriteController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteController.swift; sourceTree = "<group>"; };
+		0346E09A296640AA00C25FBD /* ReadController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadController.swift; sourceTree = "<group>"; };
+		0346E09E2966AE6C00C25FBD /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 		03A5A0AD295ED7010034D978 /* DatabaseReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseReader.swift; sourceTree = "<group>"; };
 		03A5A0AF295EE24B0034D978 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		03DF6513295FFC03000CF4B9 /* QueryBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueryBuilder.swift; sourceTree = "<group>"; };
@@ -60,7 +63,6 @@
 		03DF65192960E438000CF4B9 /* ModelControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelControllerTests.swift; sourceTree = "<group>"; };
 		03DF651B296247DA000CF4B9 /* LocalCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalCache.swift; sourceTree = "<group>"; };
 		03DF65222963E748000CF4B9 /* DataSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSync.swift; sourceTree = "<group>"; };
-		03DF65242963EC4B000CF4B9 /* ModelController+Get.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModelController+Get.swift"; sourceTree = "<group>"; };
 		03EB9BE12959219400305E5D /* Actions.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Actions.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		03EB9BE42959219400305E5D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		03EB9BE62959219400305E5D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -106,14 +108,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0346E0972965756600C25FBD /* Controller */ = {
+		0346E0972965756600C25FBD /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
 				03DF65172960DE3B000CF4B9 /* ModelController.swift */,
-				03DF65242963EC4B000CF4B9 /* ModelController+Get.swift */,
-				0346E0952965741200C25FBD /* ModelController+Errors.swift */,
+				0346E098296640A100C25FBD /* WriteController.swift */,
+				0346E09A296640AA00C25FBD /* ReadController.swift */,
+				0346E09E2966AE6C00C25FBD /* Errors.swift */,
 			);
-			path = Controller;
+			path = Controllers;
 			sourceTree = "<group>";
 		};
 		03DF65212963A1DA000CF4B9 /* Database */ = {
@@ -194,7 +197,7 @@
 			isa = PBXGroup;
 			children = (
 				03A5A0AF295EE24B0034D978 /* README.md */,
-				0346E0972965756600C25FBD /* Controller */,
+				0346E0972965756600C25FBD /* Controllers */,
 				03DF65272963FF10000CF4B9 /* Cache */,
 				03DF65212963A1DA000CF4B9 /* Database */,
 				03EB9C17295921D200305E5D /* Model.swift */,
@@ -346,14 +349,15 @@
 				03DF651C296247DA000CF4B9 /* LocalCache.swift in Sources */,
 				03EB9C212959248D00305E5D /* DatabaseWriter.swift in Sources */,
 				03EB9BE92959219400305E5D /* ViewController.swift in Sources */,
-				0346E0962965741200C25FBD /* ModelController+Errors.swift in Sources */,
+				0346E09B296640AA00C25FBD /* ReadController.swift in Sources */,
 				03DF65182960DE3B000CF4B9 /* ModelController.swift in Sources */,
 				03EB9BE52959219400305E5D /* AppDelegate.swift in Sources */,
+				0346E09F2966AE6C00C25FBD /* Errors.swift in Sources */,
 				03EB9C18295921D200305E5D /* Model.swift in Sources */,
 				03EB9BE72959219400305E5D /* SceneDelegate.swift in Sources */,
 				03A5A0AE295ED7010034D978 /* DatabaseReader.swift in Sources */,
 				03DF6514295FFC03000CF4B9 /* QueryBuilder.swift in Sources */,
-				03DF65252963EC4B000CF4B9 /* ModelController+Get.swift in Sources */,
+				0346E099296640A100C25FBD /* WriteController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

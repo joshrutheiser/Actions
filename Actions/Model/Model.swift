@@ -12,7 +12,7 @@ import FirebaseFirestoreSwift
 
 struct Action: Storable, Codable {
     @DocumentID var id: String?
-    var userId: String
+    var userId: String?
     var lastSession: String?
     var createdDate = Date()
     var lastUpdatedDate = Date()
@@ -28,14 +28,14 @@ struct Action: Storable, Codable {
     var completedDate: Date?
     var deletedDate: Date?
     
-    init(_ userId: String,
-         _ text: String,
+    init(_ text: String,
          _ parentId: String? = nil,
+         userId: String? = nil,
          session: String? = nil)
     {
-        self.userId = userId
         self.text = text
         self.parentId = parentId
+        self.userId = userId
         lastSession = session
     }
 }
@@ -45,7 +45,7 @@ typealias Mode = User.Mode
 
 struct User: Storable, Codable {
     @DocumentID var id: String?
-    var userId: String
+    var userId: String?
     var lastSession: String?
     var createdDate = Date()
     var lastUpdatedDate = Date()
@@ -55,7 +55,7 @@ struct User: Storable, Codable {
     var today: [String: [String]]
     var backlog: [String: [String]]
     
-    init(_ userId: String,
+    init(userId: String? = nil,
          session: String? = nil)
     {
         self.userId = userId
@@ -83,9 +83,18 @@ struct User: Storable, Codable {
 
 protocol Storable: Codable {
     var id: String? { get set }
-    var userId: String { get set }
+    var userId: String? { get set }
     var lastSession: String? { get set }
     var createdDate: Date { get set }
     var lastUpdatedDate: Date { get set }
     static func collection() -> String
+}
+
+//MARK: - Constants
+
+struct K {
+    struct Title {
+        static let today = "Today"
+        static let backlog = "Backlog"
+    }
 }

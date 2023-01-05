@@ -9,11 +9,11 @@ import UIKit
 import Firebase
 
 class ViewController: UIViewController, LocalCacheDelegate {
-    func userUpdated() {
+    func userUpdated(_ user: User) {
          
     }
     
-    func actionsUpdated() {
+    func actionsUpdated(_ actions: [String: Action]) {
          
     }
     

@@ -42,8 +42,7 @@ struct DataSync {
         if let user = results.first?.object {
             await config.cache.setUserNotify(user)
         } else {
-            let user = User(config.userId)
-            try await createUser(user)
+            try await createUser()
         }
         try await commit()
         
@@ -86,12 +85,13 @@ struct DataSync {
     //MARK: - Create action
     
     func createAction(_ action: Action) async throws -> String {
-        let actionId = try config.databaseWriter.create(as: Action.self, action)
+        let id = try config.databaseWriter.create(as: Action.self, action)
         var updated = action
-        updated.id = actionId
+        updated.id = id
         updated.lastSession = config.session
+        updated.userId = config.userId
         await config.cache.setAction(updated)
-        return actionId
+        return id
     }
     
     //MARK: - Update action
@@ -106,12 +106,13 @@ struct DataSync {
     
     //MARK: - Create user
     
-    func createUser(_ user: User) async throws {
-        let userId = try config.databaseWriter.create(as: User.self, user)
-        var updated = user
-        updated.id = userId
-        updated.lastSession = config.session
-        await config.cache.setUserNotify(updated)
+    func createUser() async throws {
+        var user = User()
+        let id = try config.databaseWriter.create(as: User.self, user)
+        user.id = id
+        user.lastSession = config.session
+        user.userId = config.userId
+        await config.cache.setUserNotify(user)
     }
     
     //MARK: - Update user

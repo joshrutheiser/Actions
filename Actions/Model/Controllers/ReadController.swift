@@ -1,17 +1,28 @@
 //
-//  DataSync+Get.swift
+//  ReadController.swift
 //  Actions
 //
-//  Created by Josh Rutheiser on 1/2/23.
+//  Created by Josh Rutheiser on 1/4/23.
 //
 
 import Foundation
 
-//MARK: - Get
+//MARK: - Read Controller
 
-extension ModelController {
+class ReadController {
+    private var dataSync: DataSync
     
-    //MARK: - Action
+    init(_ dataSync: DataSync) {
+        self.dataSync = dataSync
+    }
+    
+    //MARK: - Load
+    
+    func load() async throws {
+        try await dataSync.listen()
+    }
+    
+    //MARK: - Action get
     
     func getText(_ actionId: String) async throws -> String {
         return try await getAction(actionId).text
@@ -22,6 +33,19 @@ extension ModelController {
             throw Errors.ActionMissing(actionId)
         }
         return action
+    }
+    
+    func getParentId(_ actionId: String) async throws -> String? {
+        let action = try await getAction(actionId)
+        return action.parentId
+    }
+    
+    func getParent(_ actionId: String) async throws -> Action {
+        let action = try await getAction(actionId)
+        guard let parentId = action.parentId else {
+            throw Errors.ActionHasNoParent(actionId)
+        }
+        return try await getAction(parentId)
     }
     
     func getChildActionId(
@@ -45,7 +69,7 @@ extension ModelController {
         return try await getAction(actionId).scheduledDate
     }
     
-    //MARK: - User
+    //MARK: - User get
     
     func getUser() async throws -> User {
         guard let user = await dataSync.getUser() else {

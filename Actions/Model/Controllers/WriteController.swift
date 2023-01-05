@@ -60,11 +60,16 @@ class WriteController {
     }
     
     //MARK: - Complete action
+    // Don't remove from cache in case user wants to undo
     
     func completeAction(_ actionId: String) async throws
     {
-//        try await remove(actionId)
-//        var action = try await read.getAction(actionId)
+        try await remove(child: actionId)
+        var action = try await read.getAction(actionId)
+        action.isCompleted = true
+        action.completedDate = Date()
+        try await dataSync.updateAction(action)
+        try await dataSync.commit()
     }
     
     //MARK: - Delete action
@@ -81,31 +86,6 @@ class WriteController {
         _ text: String) async throws
     {
             
-    }
-    
-    #warning ("TODO: decide if I should remove the today list in favor of just pulling in the top X items")
-    
-    //MARK: - Set today
-    
-    func setToday(_ actionIds: [String]) async throws
-    {
-            
-    }
-    
-    //MARK: - Add today
-    
-    func addToday(
-        _ actionId: String,
-        _ rank: Int = 0) async throws
-    {
-        
-    }
-    
-    //MARK: - Remove today
-    
-    func removeToday(_ actionId: String) async throws
-    {
-        
     }
     
     //MARK: - Toggle mode
@@ -145,15 +125,15 @@ extension WriteController {
         at rank: Int) async throws
     {
         if parentId == nil {
-            try await backlogInsert(actionId, rank)
+            try await backlogInsert(actionId, at: rank)
         } else {
-            try await parentInsert(actionId, parentId!, rank)
+            try await parentInsert(actionId, into: parentId!, at: rank)
         }
     }
         
     private func backlogInsert(
         _ actionId: String,
-        _ rank: Int) async throws
+        at rank: Int) async throws
     {
         var user = try await read.getUser()
         let mode = user.currentMode
@@ -170,8 +150,8 @@ extension WriteController {
     
     private func parentInsert(
         _ actionId: String,
-        _ parentId: String,
-        _ rank: Int) async throws
+        into parentId: String,
+        at rank: Int) async throws
     {
         var parent = try await read.getAction(parentId)
         try checkArrayBounds(parentId, parent.childIds, rank)
@@ -186,14 +166,14 @@ extension WriteController {
     {
         let action = try await read.getAction(actionId)
         if action.parentId == nil {
-            try await backlogRemove(actionId)
+            try await backlogRemove(child: actionId)
         } else {
-            try await parentRemove(actionId)
+            try await parentRemove(child: actionId)
         }
     }
     
     private func backlogRemove(
-        _ actionId: String) async throws
+        child actionId: String) async throws
     {
         var user = try await read.getUser()
         let mode = user.currentMode
@@ -207,7 +187,7 @@ extension WriteController {
     }
     
     private func parentRemove(
-        _ actionId: String) async throws
+        child actionId: String) async throws
     {
         var parent = try await read.getParent(actionId)
         parent.childIds.removeAll(where: {$0 == actionId})
@@ -223,7 +203,7 @@ extension WriteController {
     {
         let count = ids.count + 1
         guard rank < count else {
-            throw Errors.RankOutOfBounds(parent, count, rank)
+            throw ModelError.RankOutOfBounds(parent, count, rank)
         }
     }
     

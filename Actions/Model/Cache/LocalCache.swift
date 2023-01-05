@@ -60,18 +60,25 @@ actor LocalCache {
         delegate.actionsUpdated(actions!)
     }
     
-    //MARK: - Remove action
-    
-    func removeActionNotify(_ action: Action) {
-        initActions()
-        guard let id = action.id else { return }
-        actions![id] = nil
-        delegate.actionsUpdated(actions!)
-    }
-    
     private func initActions() {
         if actions == nil {
             actions = [String: Action]()
         }
     }
+    
+    //MARK: - Remove action
+    
+    func removeAction(_ action: Action) throws {
+        guard actions != nil else {
+            throw CacheError.NoRemoveActionsNil(action.id)
+        }
+        guard let id = action.id else { return }
+        actions![id] = nil
+    }
+    
+    func removeActionNotify(_ action: Action) throws {
+        try removeAction(action)
+        delegate.actionsUpdated(actions!)
+    }
+
 }

@@ -30,7 +30,7 @@ class ReadController {
     
     func getAction(_ actionId: String) async throws -> Action {
         guard let action = await dataSync.getAction(actionId) else {
-            throw Errors.ActionMissing(actionId)
+            throw ModelError.ActionMissing(actionId)
         }
         return action
     }
@@ -43,7 +43,7 @@ class ReadController {
     func getParent(_ actionId: String) async throws -> Action {
         let action = try await getAction(actionId)
         guard let parentId = action.parentId else {
-            throw Errors.ActionHasNoParent(actionId)
+            throw ModelError.ActionHasNoParent(actionId)
         }
         return try await getAction(parentId)
     }
@@ -56,7 +56,7 @@ class ReadController {
             return nil
         }
         guard rank < children.count else {
-            throw Errors.RankOutOfBounds(parentId, children.count, rank)
+            throw ModelError.RankOutOfBounds(parentId, children.count, rank)
         }
         return children[rank]
     }
@@ -73,7 +73,7 @@ class ReadController {
     
     func getUser() async throws -> User {
         guard let user = await dataSync.getUser() else {
-            throw Errors.UserNotLoaded
+            throw ModelError.UserNotLoaded
         }
         return user
     }

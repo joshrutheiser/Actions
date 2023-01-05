@@ -126,7 +126,7 @@ final class ModelControllerTests: XCTestCase, LocalCacheDelegate {
         let id1 = try await model.write.createAction("1", rank: 0)!
         let id2 = try await model.write.createAction("2", rank: 1)!
         let id3 = try await model.write.createAction("3", rank: 2)!
-
+        
         try await model.write.moveAction(id3, rank: 0) // 0=id3, 1=id1, 2=id2
         
         let backlog = try await model.read.getBacklog()!
@@ -241,5 +241,25 @@ final class ModelControllerTests: XCTestCase, LocalCacheDelegate {
         // check that parent of id3 is nil
         let action3 = try await model.read.getAction(id3)
         XCTAssertEqual(action3.parentId, nil)
+    }
+    
+    func testCompleteBacklogAction() async throws {
+        let id1 = try await model.write.createAction("1")!
+        try await model.write.completeAction(id1)
+        
+        let backlog = try await model.read.getBacklog()!
+        XCTAssertEqual(backlog.count, 0)
+        
+        let action1 = try await model.read.getAction(id1)
+        XCTAssertTrue(action1.isCompleted)
+        XCTAssertNotNil(action1.completedDate)
+    }
+    
+    func testCompleteParentAction() async throws {
+        
+    }
+    
+    func testCompleteChildAction() async throws {
+        
     }
 }

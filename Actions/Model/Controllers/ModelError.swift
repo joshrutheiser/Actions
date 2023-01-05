@@ -1,5 +1,5 @@
 //
-//  Errors.swift
+//  ModelError.swift
 //  Actions
 //
 //  Created by Josh Rutheiser on 1/4/23.
@@ -7,9 +7,9 @@
 
 import Foundation
 
-//MARK: - Errors
+//MARK: - ModelError
 
-enum Errors: Error {
+enum ModelError: Error {
     case UserNotLoaded
     case RankOutOfBounds(_ parentId: String, _ count: Int, _ rank: Int)
     case ActionMissing(_ id: String)

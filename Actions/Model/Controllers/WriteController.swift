@@ -19,7 +19,7 @@ class WriteController {
     }
     
     //MARK: - Create action
-    // if parentId is nil, add to backlog
+    // parentId of nil == backlog
 
     func createAction(
         _ text: String,
@@ -65,10 +65,11 @@ class WriteController {
     func completeAction(_ actionId: String) async throws
     {
         try await remove(child: actionId)
-        var action = try await read.getAction(actionId)
-        action.isCompleted = true
-        action.completedDate = Date()
-        try await dataSync.updateAction(action)
+        try await setComplete(actionId)
+        let childIds = try await read.getChildActionIds(actionId)
+        for id in childIds {
+            try await setComplete(id)
+        }
         try await dataSync.commit()
     }
     
@@ -76,7 +77,13 @@ class WriteController {
     
     func deleteAction(_ actionId: String) async throws
     {
-
+        try await remove(child: actionId)
+        try await setDelete(actionId)
+        let childIds = try await read.getChildActionIds(actionId)
+        for id in childIds {
+            try await setDelete(id)
+        }
+        try await dataSync.commit()
     }
     
     //MARK: - Save action text
@@ -85,13 +92,25 @@ class WriteController {
         _ actionId: String,
         _ text: String) async throws
     {
-            
+        var action = try await read.getAction(actionId)
+        action.text = text
+        try await dataSync.updateAction(action)
+        try await dataSync.commit()
     }
     
     //MARK: - Toggle mode
     
     func toggleMode() async throws {
-        
+        var user = try await read.getUser()
+        guard let mode = Mode.init(rawValue: user.currentMode) else {
+            throw ModelError.InvalidModeSet(user.currentMode)
+        }
+        switch mode {
+            case .Personal: user.currentMode = Mode.Work.rawValue
+            case .Work: user.currentMode = Mode.Personal.rawValue
+        }
+        try await dataSync.updateUser(user)
+        try await dataSync.commit()
     }
     
     //MARK: - Skip
@@ -114,6 +133,7 @@ class WriteController {
 }
 
 //MARK: - Private functions
+// note that none of these private functions call commit()
 
 extension WriteController {
     
@@ -192,6 +212,28 @@ extension WriteController {
         var parent = try await read.getParent(actionId)
         parent.childIds.removeAll(where: {$0 == actionId})
         try await dataSync.updateAction(parent)
+    }
+    
+    //MARK: - Complete
+    
+    private func setComplete(
+        _ actionId: String) async throws
+    {
+        var action = try await read.getAction(actionId)
+        action.isCompleted = true
+        action.completedDate = Date()
+        try await dataSync.updateAction(action)
+    }
+    
+    //MARK: - Delete
+    
+    private func setDelete(
+        _ actionId: String) async throws
+    {
+        var action = try await read.getAction(actionId)
+        action.isDeleted = true
+        action.deletedDate = Date()
+        try await dataSync.updateAction(action)
     }
     
     //MARK: - Bound check

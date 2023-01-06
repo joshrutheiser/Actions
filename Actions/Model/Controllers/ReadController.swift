@@ -52,16 +52,14 @@ class ReadController {
         _ parentId: String,
         _ rank: Int) async throws -> String?
     {
-        guard let children = try await getChildActionIds(parentId) else {
-            return nil
-        }
+        let children = try await getChildActionIds(parentId)
         guard rank < children.count else {
             throw ModelError.RankOutOfBounds(parentId, children.count, rank)
         }
         return children[rank]
     }
     
-    func getChildActionIds(_ parentId: String) async throws -> [String]? {
+    func getChildActionIds(_ parentId: String) async throws -> [String] {
         return try await getAction(parentId).childIds
     }
     

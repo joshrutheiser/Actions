@@ -1,14 +1,12 @@
 
 # To do
 
-- Brainstorm ways to break down ModelController into sub controllers
+- Fix issue with database changes not having the right update behavior through listeners
 
 
 
 
 
-
-- Write model controller tests
 - write firebase security rules for userId
 
 

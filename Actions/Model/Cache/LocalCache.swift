@@ -26,12 +26,8 @@ actor LocalCache {
     }
     
     //MARK: - Set user
-
-    func setUser(_ user: User) {
-        self.user = user
-    }
     
-    func setUserNotify(_ user: User) {
+    func setUser(_ user: User) {
         self.user = user
         delegate.userUpdated(user)
     }
@@ -42,9 +38,10 @@ actor LocalCache {
         initActions()
         guard let id = action.id else { return }
         actions![id] = action
+        delegate.actionsUpdated(actions!)
     }
     
-    func setActionsNotify(_ updates: [Difference<Action>]) {
+    func setActions(_ updates: [Difference<Action>]) {
         initActions()
         
         for update in updates {
@@ -74,11 +71,7 @@ actor LocalCache {
         }
         guard let id = action.id else { return }
         actions![id] = nil
-    }
-    
-    func removeActionNotify(_ action: Action) throws {
-        try removeAction(action)
         delegate.actionsUpdated(actions!)
     }
-
+    
 }

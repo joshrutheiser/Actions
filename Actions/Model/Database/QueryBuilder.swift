@@ -27,7 +27,7 @@ class QueryBuilder<T: Storable> {
     
     @discardableResult
     func whereField(_ field: String, isEqualTo value: Bool) -> Self {
-        let predicate = NSPredicate(format: "\(field) == %d", value ? "YES" : "NO")
+        let predicate = NSPredicate(format: "\(field) == %@", value)
         predicates.append(predicate)
         return self
     }

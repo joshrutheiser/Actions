@@ -18,72 +18,76 @@ class ReadController {
     
     //MARK: - Load
     
-    func load() async throws {
-        try await dataSync.listen()
+    func startListening() async throws {
+        try await dataSync.startListening()
     }
     
     //MARK: - Action get
     
-    func getText(_ actionId: String) async throws -> String {
-        return try await getAction(actionId).text
+    func getText(_ actionId: String) throws -> String {
+        return try getAction(actionId).text
     }
     
-    func getAction(_ actionId: String) async throws -> Action {
-        guard let action = await dataSync.getAction(actionId) else {
+    func getActions() -> [String: Action] {
+        return dataSync.getActions() ?? [:] 
+    }
+    
+    func getAction(_ actionId: String) throws -> Action {
+        guard let action = dataSync.getAction(actionId) else {
             throw ModelError.ActionMissing(actionId)
         }
         return action
     }
     
-    func getParentId(_ actionId: String) async throws -> String? {
-        let action = try await getAction(actionId)
+    func getParentId(_ actionId: String) throws -> String? {
+        let action = try getAction(actionId)
         return action.parentId
     }
     
-    func getParent(_ actionId: String) async throws -> Action {
-        let action = try await getAction(actionId)
+    func getParent(_ actionId: String) throws -> Action {
+        let action = try getAction(actionId)
         guard let parentId = action.parentId else {
             throw ModelError.ActionHasNoParent(actionId)
         }
-        return try await getAction(parentId)
+        return try getAction(parentId)
     }
     
     func getChildActionId(
         _ parentId: String,
-        _ rank: Int) async throws -> String?
+        _ rank: Int) throws -> String?
     {
-        let children = try await getChildActionIds(parentId)
+        let children = try getChildActionIds(parentId)
         guard rank < children.count else {
             throw ModelError.RankOutOfBounds(parentId, children.count, rank)
         }
         return children[rank]
     }
     
-    func getChildActionIds(_ parentId: String) async throws -> [String] {
-        return try await getAction(parentId).childIds
+    func getChildActionIds(_ parentId: String) throws -> [String] {
+        return try getAction(parentId).childIds
     }
     
-    func getSchedule(_ actionId: String) async throws -> Date? {
-        return try await getAction(actionId).scheduledDate
+    func getSchedule(_ actionId: String) throws -> Date? {
+        return try getAction(actionId).scheduledDate
     }
     
     //MARK: - User get
     
-    func getUser() async throws -> User {
-        guard let user = await dataSync.getUser() else {
+    func getUser() throws -> User {
+        guard let user = dataSync.getUser() else {
             throw ModelError.UserNotLoaded
         }
         return user
     }
     
-    func getMode() async throws -> String {
-        let user = try await getUser()
+    func getMode() throws -> String {
+        let user = try getUser()
         return user.currentMode
     }
     
-    func getBacklog() async throws -> [String]? {
-        let user = try await getUser()
-        let mode = try await getMode()
+    func getBacklog() throws -> [String]? {
+        let user = try getUser()
+        let mode = try getMode()
         return user.backlog[mode]
     }
     

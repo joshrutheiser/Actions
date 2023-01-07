@@ -1,8 +1,8 @@
 
 # To do
 
-- Fix issue with database changes not having the right update behavior through listeners
-
+- Enable updating action when isCompleted changes in database through listener
+- Fix double action notify in the beginning
 
 
 

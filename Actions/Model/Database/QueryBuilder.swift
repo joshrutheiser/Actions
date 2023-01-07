@@ -8,10 +8,17 @@
 import Foundation
 import Firebase
 
+enum Predicate {
+    case isEqualToBool(_ field: String, _ value: Bool)
+    case isEqualToString(_ field: String, _ value: String)
+    case isNotEqualToString(_ field: String, _ value: String)
+    case isGreaterThanDate(_ field: String, _ value: Date)
+}
+
 //MARK: - Query Builder
 
 class QueryBuilder<T: Storable> {
-    var predicates = [NSPredicate]()
+    var predicates = [Predicate]()
     var rootPath = ""
     var collection: String
     
@@ -27,30 +34,45 @@ class QueryBuilder<T: Storable> {
     
     @discardableResult
     func whereField(_ field: String, isEqualTo value: Bool) -> Self {
-        let predicate = NSPredicate(format: "\(field) == %@", value)
-        predicates.append(predicate)
+        predicates.append(.isEqualToBool(field, value))
         return self
     }
     
     @discardableResult
     func whereField(_ field: String, isEqualTo value: String) -> Self {
-        let predicate = NSPredicate(format: "\(field) == %@", value)
-        predicates.append(predicate)
+        predicates.append(.isEqualToString(field, value))
         return self
     }
     
     @discardableResult
     func whereField(_ field: String, notEqualTo value: String) -> Self {
-        let predicate = NSPredicate(format: "\(field) != %@", value)
-        predicates.append(predicate)
+        predicates.append(.isNotEqualToString(field, value))
         return self
     }
+    
+    @discardableResult
+    func whereField(_ field: String, isGreaterThan value: Date) -> Self {
+        predicates.append(.isGreaterThanDate(field, value))
+        return self
+    }
+    
+    //MARK: - Build
     
     func build() -> Query {
         var query: Query = Firestore.firestore().collection(rootPath + collection)
         for predicate in predicates {
-            query = query.filter(using: predicate)
+            switch predicate {
+            case .isNotEqualToString(let field, let value):
+                query = query.whereField(field, isNotEqualTo: value)
+            case .isEqualToString(let field, let value):
+                query = query.whereField(field, isEqualTo: value)
+            case .isEqualToBool(let field, let value):
+                query = query.whereField(field, isEqualTo: value)
+            case .isGreaterThanDate(let field, let value):
+                query = query.whereField(field, isGreaterThan: value)
+            }
         }
+        
         return query
     }
 }

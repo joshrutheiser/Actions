@@ -33,8 +33,8 @@ class ModelController {
         self.init(config)
     }
     
-    func load() async throws {
-        try await read.load()
+    func startListening() async throws {
+        try await read.startListening()
     }
     
 }

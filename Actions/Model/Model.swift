@@ -38,6 +38,17 @@ struct Action: Storable, Codable {
         self.userId = userId
         lastSession = session
     }
+    
+    func toString() -> String {
+        let id = "Id: \(id ?? "")"
+        let text = "Text: \(text)"
+        let session = "Session: \(lastSession ?? "")"
+        let deleted = "Deleted: \(isDeleted)"
+        let completed = "Completed: \(isCompleted)"
+        let children = "Children: \(childIds)"
+        let parent = "Parent: \(parentId ?? "")"
+        return id + ", " + text + ", " + session + ", " + deleted + ", " + completed + ", " + children + ", " + parent
+    }
 }
 
 //MARK: - User
@@ -72,6 +83,13 @@ struct User: Storable, Codable {
         case Work = "Work"
     }
 
+    func toString() -> String {
+        let id = "UserId: \(userId ?? "")"
+        let mode = "Mode: \(currentMode)"
+        let session = "Session: \(lastSession ?? "")"
+        let backlog = "Backlog: \(backlog)"
+        return id + ", " + mode + ", " + session + ", " + backlog
+    }
 }
 
 //MARK: - Storable

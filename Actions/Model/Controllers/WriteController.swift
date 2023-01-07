@@ -27,8 +27,8 @@ class WriteController {
         rank: Int = 0) async throws -> String?
     {
         let action = Action(text, parentId)
-        let actionId = try await dataSync.createAction(action)
-        try await insert(actionId, into: parentId, at: rank)
+        let actionId = try dataSync.createAction(action)
+        try insert(actionId, into: parentId, at: rank)
         try await dataSync.commit()
         return actionId
     }
@@ -41,11 +41,11 @@ class WriteController {
         parentId: String?,
         rank: Int = 0) async throws
     {
-        try await remove(child: actionId)
-        try await insert(actionId, into: parentId, at: rank)
-        var action = try await read.getAction(actionId)
+        try remove(child: actionId)
+        try insert(actionId, into: parentId, at: rank)
+        var action = try read.getAction(actionId)
         action.parentId = parentId
-        try await dataSync.updateAction(action)
+        try dataSync.updateAction(action)
         try await dataSync.commit()
     }
     
@@ -55,7 +55,7 @@ class WriteController {
         _ actionId: String,
         rank: Int = 0) async throws
     {
-        let parentId = try await read.getParentId(actionId)
+        let parentId = try read.getParentId(actionId)
         try await moveActionTo(actionId, parentId: parentId, rank: rank)
     }
     
@@ -64,11 +64,11 @@ class WriteController {
     
     func completeAction(_ actionId: String) async throws
     {
-        try await remove(child: actionId)
-        try await setComplete(actionId)
-        let childIds = try await read.getChildActionIds(actionId)
+        try remove(child: actionId)
+        try setComplete(actionId)
+        let childIds = try read.getChildActionIds(actionId)
         for id in childIds {
-            try await setComplete(id)
+            try setComplete(id)
         }
         try await dataSync.commit()
     }
@@ -77,11 +77,11 @@ class WriteController {
     
     func deleteAction(_ actionId: String) async throws
     {
-        try await remove(child: actionId)
-        try await setDelete(actionId)
-        let childIds = try await read.getChildActionIds(actionId)
+        try remove(child: actionId)
+        try setDelete(actionId)
+        let childIds = try read.getChildActionIds(actionId)
         for id in childIds {
-            try await setDelete(id)
+            try setDelete(id)
         }
         try await dataSync.commit()
     }
@@ -92,16 +92,16 @@ class WriteController {
         _ actionId: String,
         _ text: String) async throws
     {
-        var action = try await read.getAction(actionId)
+        var action = try read.getAction(actionId)
         action.text = text
-        try await dataSync.updateAction(action)
+        try dataSync.updateAction(action)
         try await dataSync.commit()
     }
     
     //MARK: - Toggle mode
     
     func toggleMode() async throws {
-        var user = try await read.getUser()
+        var user = try read.getUser()
         guard let mode = Mode.init(rawValue: user.currentMode) else {
             throw ModelError.InvalidModeSet(user.currentMode)
         }
@@ -109,7 +109,7 @@ class WriteController {
             case .Personal: user.currentMode = Mode.Work.rawValue
             case .Work: user.currentMode = Mode.Personal.rawValue
         }
-        try await dataSync.updateUser(user)
+        try dataSync.updateUser(user)
         try await dataSync.commit()
     }
     
@@ -142,20 +142,20 @@ extension WriteController {
     private func insert(
         _ actionId: String,
         into parentId: String?,
-        at rank: Int) async throws
+        at rank: Int) throws
     {
         if parentId == nil {
-            try await backlogInsert(actionId, at: rank)
+            try backlogInsert(actionId, at: rank)
         } else {
-            try await parentInsert(actionId, into: parentId!, at: rank)
+            try parentInsert(actionId, into: parentId!, at: rank)
         }
     }
         
     private func backlogInsert(
         _ actionId: String,
-        at rank: Int) async throws
+        at rank: Int) throws
     {
-        var user = try await read.getUser()
+        var user = try read.getUser()
         let mode = user.currentMode
         if var backlog = user.backlog[mode] {
             try checkArrayBounds(K.Title.backlog, backlog, rank)
@@ -165,37 +165,37 @@ extension WriteController {
             try checkArrayBounds(K.Title.backlog, [], rank)
             user.backlog[mode] = [actionId]
         }
-        try await dataSync.updateUser(user)
+        try dataSync.updateUser(user)
     }
     
     private func parentInsert(
         _ actionId: String,
         into parentId: String,
-        at rank: Int) async throws
+        at rank: Int) throws
     {
-        var parent = try await read.getAction(parentId)
+        var parent = try read.getAction(parentId)
         try checkArrayBounds(parentId, parent.childIds, rank)
         parent.childIds.insert(actionId, at: rank)
-        try await dataSync.updateAction(parent)
+        try dataSync.updateAction(parent)
     }
     
     //MARK: - Remove
     
     private func remove(
-        child actionId: String) async throws
+        child actionId: String) throws
     {
-        let action = try await read.getAction(actionId)
+        let action = try read.getAction(actionId)
         if action.parentId == nil {
-            try await backlogRemove(child: actionId)
+            try backlogRemove(child: actionId)
         } else {
-            try await parentRemove(child: actionId)
+            try parentRemove(child: actionId)
         }
     }
     
     private func backlogRemove(
-        child actionId: String) async throws
+        child actionId: String) throws
     {
-        var user = try await read.getUser()
+        var user = try read.getUser()
         let mode = user.currentMode
         if var backlog = user.backlog[mode] {
             backlog.removeAll(where: { $0 == actionId })
@@ -203,37 +203,37 @@ extension WriteController {
         } else {
             user.backlog[mode] = []
         }
-        try await dataSync.updateUser(user)
+        try dataSync.updateUser(user)
     }
     
     private func parentRemove(
-        child actionId: String) async throws
+        child actionId: String) throws
     {
-        var parent = try await read.getParent(actionId)
+        var parent = try read.getParent(actionId)
         parent.childIds.removeAll(where: {$0 == actionId})
-        try await dataSync.updateAction(parent)
+        try dataSync.updateAction(parent)
     }
     
     //MARK: - Complete
     
     private func setComplete(
-        _ actionId: String) async throws
+        _ actionId: String) throws
     {
-        var action = try await read.getAction(actionId)
+        var action = try read.getAction(actionId)
         action.isCompleted = true
         action.completedDate = Date()
-        try await dataSync.updateAction(action)
+        try dataSync.updateAction(action)
     }
     
     //MARK: - Delete
     
     private func setDelete(
-        _ actionId: String) async throws
+        _ actionId: String) throws
     {
-        var action = try await read.getAction(actionId)
+        var action = try read.getAction(actionId)
         action.isDeleted = true
         action.deletedDate = Date()
-        try await dataSync.updateAction(action)
+        try dataSync.updateAction(action)
     }
     
     //MARK: - Bound check

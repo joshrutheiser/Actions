@@ -10,13 +10,12 @@ import Foundation
 //MARK: - Local Cache Delegate
 
 protocol LocalCacheDelegate {
-    func userUpdated(_ user: User)
-    func actionsUpdated(_ actions: [String: Action])
+    func dataUpdated()
 }
 
 //MARK: - Local Cache
 
-actor LocalCache {
+struct LocalCache {
     var user: User?
     var actions: [String: Action]?
     var delegate: LocalCacheDelegate
@@ -27,37 +26,35 @@ actor LocalCache {
     
     //MARK: - Set user
     
-    func setUser(_ user: User) {
+    mutating func setUser(_ user: User) {
         self.user = user
-        delegate.userUpdated(user)
     }
 
     //MARK: - Set action
     
-    func setAction(_ action: Action) {
+    mutating func setAction(_ action: Action) {
         initActions()
         guard let id = action.id else { return }
         actions![id] = action
-        delegate.actionsUpdated(actions!)
     }
     
-    func setActions(_ updates: [Difference<Action>]) {
+    mutating func setActions(_ updates: [Difference<Action>]) {
         initActions()
         
         for update in updates {
             guard let id = update.object.id else { continue }
             switch update.change {
             case .Remove:
-                actions![id] = nil
+                // don't remove from cache to prevent app crashes
+//                actions![id] = nil
+                continue
             case .Set:
                 actions![id] = update.object
             }
         }
-        
-        delegate.actionsUpdated(actions!)
     }
     
-    private func initActions() {
+    mutating private func initActions() {
         if actions == nil {
             actions = [String: Action]()
         }
@@ -65,13 +62,17 @@ actor LocalCache {
     
     //MARK: - Remove action
     
-    func removeAction(_ action: Action) throws {
+    mutating func removeAction(_ action: Action) throws {
         guard actions != nil else {
             throw CacheError.NoRemoveActionsNil(action.id)
         }
         guard let id = action.id else { return }
         actions![id] = nil
-        delegate.actionsUpdated(actions!)
     }
     
+    //MARK: - Notify
+    
+    func notify() {
+        delegate.dataUpdated()
+    }
 }

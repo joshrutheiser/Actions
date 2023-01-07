@@ -1,8 +1,10 @@
 
 # To do
 
-- Enable updating action when isCompleted changes in database through listener
-- Fix double action notify in the beginning
+- Do I need a today list? possible approaches:
+    * Show top X items from backlog. How to handle user adding tasks to today?
+    * Move from backlog to today. How to handle child tasks?
+    * Reference backlog tasks in Today. How to handle prioritization changes?
 
 
 
@@ -22,6 +24,8 @@ real-time safe cross-device collaboration
 - Write function headers for controller functions
 - Write unit tests for Database Writer and Reader
 - Investigate setting root path in database reader (NSPredicate?)
+- Enable updating action when isCompleted changes in database through listener
+- Fix double action notify in the beginning
 
 
 

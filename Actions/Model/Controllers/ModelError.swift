@@ -15,4 +15,5 @@ enum ModelError: Error {
     case ActionMissing(_ id: String)
     case ActionHasNoParent(_ id: String)
     case InvalidModeSet(_ mode: String)
+    case BacklogNotFound(_ mode: String)
 }

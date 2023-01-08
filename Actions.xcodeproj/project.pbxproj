@@ -11,6 +11,7 @@
 		0346E09B296640AA00C25FBD /* ReadController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0346E09A296640AA00C25FBD /* ReadController.swift */; };
 		0346E09F2966AE6C00C25FBD /* ModelError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0346E09E2966AE6C00C25FBD /* ModelError.swift */; };
 		0346E0A12966B8C700C25FBD /* CacheError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0346E0A02966B8C700C25FBD /* CacheError.swift */; };
+		0346E0A3296A8C5000C25FBD /* BacklogViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0346E0A2296A8C5000C25FBD /* BacklogViewModel.swift */; };
 		03A5A0AE295ED7010034D978 /* DatabaseReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A5A0AD295ED7010034D978 /* DatabaseReader.swift */; };
 		03A5A0B0295EE24B0034D978 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 03A5A0AF295EE24B0034D978 /* README.md */; };
 		03DF6514295FFC03000CF4B9 /* QueryBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DF6513295FFC03000CF4B9 /* QueryBuilder.swift */; };
@@ -57,6 +58,7 @@
 		0346E09A296640AA00C25FBD /* ReadController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadController.swift; sourceTree = "<group>"; };
 		0346E09E2966AE6C00C25FBD /* ModelError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelError.swift; sourceTree = "<group>"; };
 		0346E0A02966B8C700C25FBD /* CacheError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheError.swift; sourceTree = "<group>"; };
+		0346E0A2296A8C5000C25FBD /* BacklogViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BacklogViewModel.swift; sourceTree = "<group>"; };
 		03A5A0AD295ED7010034D978 /* DatabaseReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseReader.swift; sourceTree = "<group>"; };
 		03A5A0AF295EE24B0034D978 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		03DF6513295FFC03000CF4B9 /* QueryBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueryBuilder.swift; sourceTree = "<group>"; };
@@ -121,6 +123,30 @@
 			path = Controllers;
 			sourceTree = "<group>";
 		};
+		0346E0A4296A8C5600C25FBD /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				0346E0A2296A8C5000C25FBD /* BacklogViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		0346E0A5296AB44700C25FBD /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				0346E0A6296AB46B00C25FBD /* Controllers */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		0346E0A6296AB46B00C25FBD /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				03EB9BE82959219400305E5D /* ViewController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
 		03DF65212963A1DA000CF4B9 /* Database */ = {
 			isa = PBXGroup;
 			children = (
@@ -165,9 +191,10 @@
 			isa = PBXGroup;
 			children = (
 				03EB9C14295921A000305E5D /* Model */,
+				0346E0A4296A8C5600C25FBD /* ViewModels */,
+				0346E0A5296AB44700C25FBD /* Views */,
 				03EB9BE42959219400305E5D /* AppDelegate.swift */,
 				03EB9BE62959219400305E5D /* SceneDelegate.swift */,
-				03EB9BE82959219400305E5D /* ViewController.swift */,
 				03EB9BEA2959219400305E5D /* Main.storyboard */,
 				03EB9BED2959219400305E5D /* Assets.xcassets */,
 				03EB9BEF2959219400305E5D /* LaunchScreen.storyboard */,
@@ -353,6 +380,7 @@
 				03EB9C212959248D00305E5D /* DatabaseWriter.swift in Sources */,
 				03EB9BE92959219400305E5D /* ViewController.swift in Sources */,
 				0346E09B296640AA00C25FBD /* ReadController.swift in Sources */,
+				0346E0A3296A8C5000C25FBD /* BacklogViewModel.swift in Sources */,
 				03DF65182960DE3B000CF4B9 /* ModelController.swift in Sources */,
 				03EB9BE52959219400305E5D /* AppDelegate.swift in Sources */,
 				0346E09F2966AE6C00C25FBD /* ModelError.swift in Sources */,

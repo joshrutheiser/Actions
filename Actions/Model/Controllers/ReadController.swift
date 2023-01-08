@@ -24,14 +24,6 @@ class ReadController {
     
     //MARK: - Action get
     
-    func getText(_ actionId: String) throws -> String {
-        return try getAction(actionId).text
-    }
-    
-    func getActions() -> [String: Action] {
-        return dataSync.getActions() ?? [:] 
-    }
-    
     func getAction(_ actionId: String) throws -> Action {
         guard let action = dataSync.getAction(actionId) else {
             throw ModelError.ActionMissing(actionId)
@@ -81,14 +73,25 @@ class ReadController {
     }
     
     func getMode() throws -> String {
-        let user = try getUser()
-        return user.currentMode
+        return try getUser().currentMode
     }
     
-    func getBacklog() throws -> [String]? {
+    func getBacklog() throws -> [String] {
         let user = try getUser()
-        let mode = try getMode()
-        return user.backlog[mode]
+        let mode = user.currentMode
+        guard let backlog = user.backlog[mode] else {
+            throw ModelError.BacklogNotFound(mode)
+        }
+        return backlog
     }
     
+    //MARK: - Is set
+    
+    func isUserSet() -> Bool {
+        return dataSync.getUser() != nil
+    }
+    
+    func isActionsSet() -> Bool {
+        return dataSync.getActions() != nil
+    }
 }

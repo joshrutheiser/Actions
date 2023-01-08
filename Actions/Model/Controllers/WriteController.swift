@@ -21,6 +21,7 @@ class WriteController {
     //MARK: - Create action
     // parentId of nil == backlog
 
+    @discardableResult
     func createAction(
         _ text: String,
         parentId: String? = nil,
@@ -95,7 +96,7 @@ class WriteController {
         var action = try read.getAction(actionId)
         action.text = text
         try dataSync.updateAction(action)
-        try await dataSync.commit()
+        try await dataSync.commit(notify: false)
     }
     
     //MARK: - Toggle mode

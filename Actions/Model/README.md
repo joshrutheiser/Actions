@@ -44,6 +44,7 @@ let user = model.read.getUser()
 
 - Design Backlog view and implement Today view to identify if the model needs to change.
 - write firebase security rules for userId
+- do I need to remove listeners when app goes into background and then restart when it goes back into the foreground?
 
 
 # Features

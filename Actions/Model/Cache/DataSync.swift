@@ -41,9 +41,9 @@ class DataSync {
     //MARK: - Listen User
         
     private func listenUser() async throws {
+        // check for session not equal to current was removed from query because of bad behavior where user loaded from previous session was then removed when updated, resulting in the old user object being sent to the listener along with a remove command
         let query = QueryBuilder(User.self)
             .whereField("userId", isEqualTo: config.userId)
-            .whereField("lastSession", notEqualTo: config.session)
 
         // create user if doesn't exist
         let results = try await reader.getDocuments(query, as: User.self)
@@ -54,8 +54,10 @@ class DataSync {
         
         reader.listenDocuments(query, as: User.self) {
             results in
-            guard let user = results.first?.object else { return }
-            self.cache.setUser(user)
+            guard let result = results.first else { return }
+            // only publish changes from other sessions because current session changes are published to cache directly
+            guard result.object.lastSession != self.config.session else { return }
+            self.cache.setUser(result.object)
             self.cache.notify()
         }
     }
@@ -81,8 +83,7 @@ class DataSync {
 
         reader.listenDocuments(listenQuery, as: Action.self) {
             results in
-            // only publish changes from other sessions because current
-            // session changes are published to cache directly
+            // only publish changes from other sessions because current session changes are published to cache directly
             let filtered = results.filter { $0.object.lastSession != self.config.session }
             guard filtered.isEmpty == false else { return }
             
@@ -150,8 +151,10 @@ class DataSync {
     
     //MARK: - Commit
     
-    func commit() async throws {
-        cache.notify()
+    func commit(notify: Bool = true) async throws {
+        if notify {
+            cache.notify()
+        }
         try await writer.commit()
     }
 }

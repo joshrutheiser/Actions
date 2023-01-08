@@ -16,8 +16,8 @@ class DatabaseWriter {
     private var writeBatch: WriteBatch
     private var rootPath: String
     
-    init() {
-        rootPath = ""
+    init(_ rootPath: String = "") {
+        self.rootPath = rootPath
         firestore = Firestore.firestore()
         writeBatch = firestore.batch()
     }

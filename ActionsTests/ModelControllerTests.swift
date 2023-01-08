@@ -30,11 +30,10 @@ final class ModelControllerTests: XCTestCase, LocalCacheDelegate {
         databaseReader.setRootPath(testPath)
         
         let config = DataSyncConfig (
-            databaseWriter: databaseWriter,
-            databaseReader: databaseReader,
-            cache: LocalCache(self),
+            delegate: self,
             session: session,
-            userId: userId
+            userId: userId,
+            rootPath: testPath
         )
         
         model = ModelController(config)
@@ -373,5 +372,31 @@ final class ModelControllerTests: XCTestCase, LocalCacheDelegate {
         XCTAssertEqual(backlogC[1], idC)
         XCTAssertEqual(backlogC.count, 2)
     }
+    
+    //MARK: - Skip
+    
+    func testSkip() async throws {
+        let idA = try await model.write.createAction("A")!
+        try await model.write.skip(idA)
+        let action = try model.read.getAction(idA)
+        XCTAssertEqual(action.skipped, 1)
+        XCTAssertNotNil(action.lastSkipped)
+        let firstSkipDate = action.lastSkipped!
+        
+        try await model.write.skip(idA)
+        let action2 = try model.read.getAction(idA)
+        XCTAssertEqual(action2.skipped, 2)
+        XCTAssertNotNil(action.lastSkipped)
+        XCTAssert(action2.lastSkipped! > firstSkipDate)
+    }
 
+    //MARK: - Schedule
+    
+    func testSchedule() async throws {
+        let idA = try await model.write.createAction("A")!
+        try await model.write.schedule(idA, Date())
+        let action = try model.read.getAction(idA)
+        XCTAssertNotNil(action.scheduledDate)
+    }
+    
 }

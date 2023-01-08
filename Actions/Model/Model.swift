@@ -23,6 +23,7 @@ struct Action: Storable, Codable {
     var childIds = [String]()
     var scheduledDate: Date?
     var skipped = 0
+    var lastSkipped: Date?
     var isCompleted = false
     var isDeleted = false
     var completedDate: Date?

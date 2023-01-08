@@ -10,7 +10,7 @@ import Foundation
 //MARK: - Read Controller
 
 class ReadController {
-    private var dataSync: DataSync
+    private let dataSync: DataSync
     
     init(_ dataSync: DataSync) {
         self.dataSync = dataSync

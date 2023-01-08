@@ -15,10 +15,10 @@ class DatabaseReader {
     private var listeners: [ListenerRegistration]
     private var rootPath: String
     
-    init() {
+    init(_ rootPath: String = "") {
+        self.rootPath = rootPath
         firestore = Firestore.firestore()
         listeners = [ListenerRegistration]()
-        rootPath = ""
     }
     
     func setRootPath(_ rootPath: String) {

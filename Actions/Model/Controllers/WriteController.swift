@@ -117,17 +117,24 @@ class WriteController {
     
     func skip(_ actionId: String) async throws
     {
-        
+        var action = try read.getAction(actionId)
+        action.skipped += 1
+        action.lastSkipped = Date()
+        try dataSync.updateAction(action)
+        try await dataSync.commit()
     }
     
     
-    //MARK: - Set schedule
+    //MARK: - Schedule
     
-    func setSchedule(
+    func schedule(
         _ actionId: String,
         _ schedule: Date) async throws
     {
-        
+        var action = try read.getAction(actionId)
+        action.scheduledDate = schedule
+        try dataSync.updateAction(action)
+        try await dataSync.commit()
     }
     
 }

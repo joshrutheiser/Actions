@@ -45,8 +45,7 @@ struct LocalCache {
             guard let id = update.object.id else { continue }
             switch update.change {
             case .Remove:
-                // don't remove from cache to prevent app crashes
-//                actions![id] = nil
+                // to prevent app crashes, don't remove from cache
                 continue
             case .Set:
                 actions![id] = update.object

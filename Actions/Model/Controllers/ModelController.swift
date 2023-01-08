@@ -10,8 +10,8 @@ import Foundation
 //MARK: - Model Controller
 
 class ModelController {
-    var read: ReadController
-    var write: WriteController
+    let read: ReadController
+    let write: WriteController
 
     init(_ config: DataSyncConfig) {
         let dataSync = DataSync(config)
@@ -19,14 +19,11 @@ class ModelController {
         write = WriteController(dataSync, read)
     }
     
-    convenience init(
-        _ userId: String,
+    convenience init(_ userId: String,
         _ delegate: LocalCacheDelegate)
     {
         let config = DataSyncConfig(
-            databaseWriter: DatabaseWriter(),
-            databaseReader: DatabaseReader(),
-            cache: LocalCache(delegate),
+            delegate: delegate,
             session: UUID().uuidString,
             userId: userId
         )

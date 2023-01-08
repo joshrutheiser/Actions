@@ -1,4 +1,46 @@
 
+# Examples
+
+Writing example:
+
+```swift
+
+let model = ModelController(UUID().uuidString, self)
+Task {
+    do {
+        // load data from database and start listening to changes
+        try await model.startListening()
+        
+        // create an action
+        let idA = try await model.write.createAction("A")
+        
+        // create an action with a parent
+        let idB = try await model.write.createAction("B", parentId: idA)
+
+        // move child action from parent to backlog
+        try await model!.write.moveActionTo(idB!, parentId: nil)
+
+        // delete action
+        try await model!.write.deleteAction(idA!)
+        
+        // complete action
+        try await model!.write.completeAction(idB!)
+    } catch {
+        print(error)
+    }
+}
+
+```
+
+Reading example:
+
+```swift
+let model = ModelController(UUID().uuidString, self)
+let actions = model.read.getActions()
+let user = model.read.getUser()
+```
+
+
 # To do
 
 Try subset view first since it is easy to implement.

@@ -8,5 +8,5 @@
 import Foundation
 
 enum CacheError: Error {
-    case NoRemoveActionsNil(_ actionId: String?)
+    case UnableToRemoveAction(_ actionId: String?)
 }

@@ -34,6 +34,20 @@ class WriteController {
         return actionId
     }
     
+    func createAction(
+        _ text: String,
+        parentId: String? = nil,
+        rank: Int = 0) throws -> String?
+    {
+        let action = Action(text, parentId)
+        let actionId = try dataSync.createAction(action)
+        try insert(actionId, into: parentId, at: rank)
+        Task {
+            try await self.dataSync.commit()
+        }
+        return actionId
+    }
+    
     //MARK: - Move action
     // parentId of nil == backlog
     

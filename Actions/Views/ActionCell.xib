@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="none" indentationWidth="0.0" shouldIndentWhileEditing="NO" reuseIdentifier="ActionCell" rowHeight="35" id="KGk-i7-Jjw" customClass="ActionCell" customModule="Actions" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="35"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="35"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <stackView opaque="NO" contentMode="scaleToFill" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="yVV-iL-EUP">
+                        <rect key="frame" x="15" y="0.0" width="290" height="35"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hat-Sv-9Oa">
+                                <rect key="frame" x="0.0" y="0.0" width="27" height="35"/>
+                                <subviews>
+                                    <button contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="top" adjustsImageWhenHighlighted="NO" adjustsImageWhenDisabled="NO" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aQl-7s-e9p" customClass="Checkmark" customModule="Actions" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="27" height="27"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="27" id="3Ar-7u-zS4"/>
+                                            <constraint firstAttribute="height" constant="27" id="HkT-SR-rhJ"/>
+                                        </constraints>
+                                        <color key="tintColor" systemColor="labelColor"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain" image="circle" catalog="system">
+                                            <backgroundConfiguration key="background"/>
+                                            <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" weight="regular"/>
+                                            <color key="baseForegroundColor" systemColor="labelColor"/>
+                                        </buttonConfiguration>
+                                        <connections>
+                                            <action selector="completePressed:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="saG-l5-gQd"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstItem="aQl-7s-e9p" firstAttribute="top" secondItem="hat-Sv-9Oa" secondAttribute="top" id="Xel-Nh-eW7"/>
+                                    <constraint firstAttribute="trailing" secondItem="aQl-7s-e9p" secondAttribute="trailing" id="fCe-pO-37t"/>
+                                    <constraint firstItem="aQl-7s-e9p" firstAttribute="leading" secondItem="hat-Sv-9Oa" secondAttribute="leading" id="uNa-Pm-Tb1"/>
+                                    <constraint firstAttribute="width" constant="27" id="weH-Sv-Tke"/>
+                                </constraints>
+                            </view>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" text="Action" translatesAutoresizingMaskIntoConstraints="NO" id="mcD-9G-HsY" customClass="EditableText" customModule="Actions" customModuleProvider="target">
+                                <rect key="frame" x="32" y="0.0" width="258" height="35"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <color key="textColor" systemColor="labelColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences" returnKeyType="next"/>
+                                <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES"/>
+                            </textView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="35" id="HLJ-c6-t93"/>
+                            <constraint firstItem="hat-Sv-9Oa" firstAttribute="top" secondItem="yVV-iL-EUP" secondAttribute="top" id="ax3-O7-shV"/>
+                            <constraint firstItem="mcD-9G-HsY" firstAttribute="top" secondItem="yVV-iL-EUP" secondAttribute="top" id="g9p-xj-tdP"/>
+                            <constraint firstAttribute="bottom" secondItem="hat-Sv-9Oa" secondAttribute="bottom" id="gsC-Yi-TAJ"/>
+                            <constraint firstAttribute="bottom" secondItem="mcD-9G-HsY" secondAttribute="bottom" id="kw0-iF-efy"/>
+                        </constraints>
+                    </stackView>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="yVV-iL-EUP" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="15" id="9S0-iW-FYe"/>
+                    <constraint firstAttribute="bottom" secondItem="yVV-iL-EUP" secondAttribute="bottom" id="NqR-ba-OuI"/>
+                    <constraint firstAttribute="trailing" secondItem="yVV-iL-EUP" secondAttribute="trailing" constant="15" id="Nsn-6o-7zM"/>
+                    <constraint firstItem="yVV-iL-EUP" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="crP-9I-FDr"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="actionText" destination="mcD-9G-HsY" id="CrW-cu-6pl"/>
+            </connections>
+            <point key="canvasLocation" x="109.9236641221374" y="19.366197183098592"/>
+        </tableViewCell>
+    </objects>
+    <designables>
+        <designable name="aQl-7s-e9p">
+            <size key="intrinsicContentSize" width="49.666666666666664" height="34.333333333333336"/>
+        </designable>
+        <designable name="mcD-9G-HsY">
+            <size key="intrinsicContentSize" width="56.333333333333336" height="35.333333333333336"/>
+        </designable>
+    </designables>
+    <resources>
+        <image name="circle" catalog="system" width="128" height="123"/>
+        <systemColor name="labelColor">
+            <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

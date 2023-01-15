@@ -63,7 +63,7 @@ struct LocalCache {
     
     mutating func removeAction(_ action: Action) throws {
         guard actions != nil else {
-            throw CacheError.NoRemoveActionsNil(action.id)
+            throw CacheError.UnableToRemoveAction(action.id)
         }
         guard let id = action.id else { return }
         actions![id] = nil

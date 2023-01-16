@@ -59,8 +59,8 @@ final class ModelControllerTests: XCTestCase, LocalCacheDelegate {
         XCTAssertNotNil(user)
         XCTAssertNotNil(action)
         XCTAssertNotNil(backlog)
-        XCTAssertEqual(backlog!.count, 1)
-        XCTAssertEqual(backlog!.first, actionId)
+        XCTAssertEqual(backlog.count, 1)
+        XCTAssertEqual(backlog.first, actionId)
     }
     
     func testCreateActionInBacklog_Multiple() async throws {
@@ -69,10 +69,10 @@ final class ModelControllerTests: XCTestCase, LocalCacheDelegate {
         let id3 = try await model.write.createAction("3")!
         let backlog = try model.read.getBacklog()
         XCTAssertNotNil(backlog)
-        XCTAssertEqual(backlog!.count, 3)
-        XCTAssertEqual(backlog![0], id3)
-        XCTAssertEqual(backlog![1], id2)
-        XCTAssertEqual(backlog![2], id1)
+        XCTAssertEqual(backlog.count, 3)
+        XCTAssertEqual(backlog[0], id3)
+        XCTAssertEqual(backlog[1], id2)
+        XCTAssertEqual(backlog[2], id1)
     }
     
     func testCreateRankedActionInBacklog() async throws {
@@ -82,11 +82,11 @@ final class ModelControllerTests: XCTestCase, LocalCacheDelegate {
         let id4 = try await model.write.createAction("4", rank: 2)
         let backlog = try model.read.getBacklog()
         XCTAssertNotNil(backlog)
-        XCTAssertEqual(backlog!.count, 4)
-        XCTAssertEqual(backlog![0], id3)
-        XCTAssertEqual(backlog![1], id2)
-        XCTAssertEqual(backlog![2], id4)
-        XCTAssertEqual(backlog![3], id1)
+        XCTAssertEqual(backlog.count, 4)
+        XCTAssertEqual(backlog[0], id3)
+        XCTAssertEqual(backlog[1], id2)
+        XCTAssertEqual(backlog[2], id4)
+        XCTAssertEqual(backlog[3], id1)
     }
     
     func testCreateRankedActionInBacklog_OutOfBounds() async throws {
@@ -106,8 +106,8 @@ final class ModelControllerTests: XCTestCase, LocalCacheDelegate {
         let id3 = try await model.write.createAction("b", parentId: id1, rank: 1)!
         
         let backlog = try model.read.getBacklog()
-        XCTAssertEqual(backlog!.count, 1)
-        XCTAssertEqual(backlog![0], id1)
+        XCTAssertEqual(backlog.count, 1)
+        XCTAssertEqual(backlog[0], id1)
         
         let parent = try model.read.getAction(id1)
         let child1 = try model.read.getAction(id2)
@@ -128,7 +128,7 @@ final class ModelControllerTests: XCTestCase, LocalCacheDelegate {
         
         try await model.write.moveAction(id3, rank: 0) // 0=id3, 1=id1, 2=id2
         
-        let backlog = try model.read.getBacklog()!
+        let backlog = try model.read.getBacklog()
         XCTAssertEqual(backlog[0], id3)
         XCTAssertEqual(backlog[1], id1)
         XCTAssertEqual(backlog[2], id2)
@@ -181,7 +181,7 @@ final class ModelControllerTests: XCTestCase, LocalCacheDelegate {
         XCTAssertEqual(children[3], id3)
         
         // check that ParentB is no longer in backlog
-        let backlog = try model.read.getBacklog()!
+        let backlog = try model.read.getBacklog()
         XCTAssertEqual(backlog.count, 1)
         XCTAssertEqual(backlog[0], idA)
         
@@ -232,7 +232,7 @@ final class ModelControllerTests: XCTestCase, LocalCacheDelegate {
         XCTAssertEqual(childrenA[0], id1)
         XCTAssertEqual(childrenA[1], id2)
         
-        let backlog = try model.read.getBacklog()!
+        let backlog = try model.read.getBacklog()
         XCTAssertEqual(backlog.count, 2)
         XCTAssertEqual(backlog[0], id3)
         XCTAssertEqual(backlog[1], idA)
@@ -248,7 +248,7 @@ final class ModelControllerTests: XCTestCase, LocalCacheDelegate {
         let id1 = try await model.write.createAction("1")!
         try await model.write.completeAction(id1)
         
-        let backlog = try model.read.getBacklog()!
+        let backlog = try model.read.getBacklog()
         XCTAssertEqual(backlog.count, 0)
         
         let action1 = try model.read.getAction(id1)
@@ -262,7 +262,7 @@ final class ModelControllerTests: XCTestCase, LocalCacheDelegate {
         let id2 = try await model.write.createAction("2", parentId: idA)!
         try await model.write.completeAction(idA)
                 
-        let backlog = try model.read.getBacklog()!
+        let backlog = try model.read.getBacklog()
         XCTAssertEqual(backlog.count, 0)
         
         let action1 = try model.read.getAction(id1)
@@ -280,7 +280,7 @@ final class ModelControllerTests: XCTestCase, LocalCacheDelegate {
         let id2 = try await model.write.createAction("2", parentId: idA)!
         try await model.write.completeAction(id1)
                 
-        let backlog = try model.read.getBacklog()!
+        let backlog = try model.read.getBacklog()
         XCTAssertEqual(backlog.count, 1)
         
         let children = try model.read.getChildActionIds(idA)
@@ -294,7 +294,7 @@ final class ModelControllerTests: XCTestCase, LocalCacheDelegate {
         let id1 = try await model.write.createAction("1")!
         try await model.write.deleteAction(id1)
         
-        let backlog = try model.read.getBacklog()!
+        let backlog = try model.read.getBacklog()
         XCTAssertEqual(backlog.count, 0)
         
         let action1 = try model.read.getAction(id1)
@@ -308,7 +308,7 @@ final class ModelControllerTests: XCTestCase, LocalCacheDelegate {
         let id2 = try await model.write.createAction("2", parentId: idA)!
         try await model.write.deleteAction(idA)
                 
-        let backlog = try model.read.getBacklog()!
+        let backlog = try model.read.getBacklog()
         XCTAssertEqual(backlog.count, 0)
         
         let action1 = try model.read.getAction(id1)
@@ -326,7 +326,7 @@ final class ModelControllerTests: XCTestCase, LocalCacheDelegate {
         let id2 = try await model.write.createAction("2", parentId: idA)!
         try await model.write.deleteAction(id1)
                 
-        let backlog = try model.read.getBacklog()!
+        let backlog = try model.read.getBacklog()
         XCTAssertEqual(backlog.count, 1)
         
         let children = try model.read.getChildActionIds(idA)
@@ -399,4 +399,9 @@ final class ModelControllerTests: XCTestCase, LocalCacheDelegate {
         XCTAssertNotNil(action.scheduledDate)
     }
     
+    //MARK: - Enter
+    
+    func testEnterPressed() async throws {
+        
+    }
 }

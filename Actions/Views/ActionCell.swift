@@ -7,43 +7,55 @@
 
 import UIKit
 
+/*
+ 
+ Responsibility = render action view
+ Delegate = action events
+ 
+ */
+
 protocol ActionCellDelegate {
-    func complete(_ actionId: String)
-    func textEvent(_ actionId: String, _ event: TextEvent)
+    func handleEditEvent(_ actionId: String, _ event: EditEvent)
 }
 
 class ActionCell: UITableViewCell {
-    @IBOutlet weak var actionText: EditableText!
-    private var actionId: String?
+    @IBOutlet weak var editText: EditableText!
+    var id: String?
     var delegate: ActionCellDelegate?
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        actionText.translatesAutoresizingMaskIntoConstraints = false
-        actionText.editDelegate = self
+        editText.translatesAutoresizingMaskIntoConstraints = false
+        editText.editDelegate = self
     }
 
     override func prepareForReuse() {
-        actionText.reset()
-        actionId = nil
+        editText.reset()
+        id = nil
         delegate = nil
     }
     
-    func setup(_ action: Action) {
-        actionText.text = action.text
-        actionId = action.id
+    func setText(_ text: String) {
+        editText.text = text
+    }
+    
+    func getText() -> String {
+        return editText.trimmedText()
     }
     
     @IBAction func completePressed(_ sender: UIButton) {
-        guard let actionId = actionId else { return }
-        actionText.stopEditing()
-        delegate?.complete(actionId)
+        guard let id = id else { return }
+        delegate?.handleEditEvent(id, .Complete)
+    }
+    
+    func stopEditing() {
+        editText.stopEditing()
     }
 }
 
 extension ActionCell: EditableTextDelegate {
-    func textEvent(_ event: TextEvent) {
-        guard let actionId = actionId else { return }
-        delegate?.textEvent(actionId, event)
+    func editEvent(_ event: EditEvent) {
+        guard let id = id else { return }
+        delegate?.handleEditEvent(id, event)
     }
 }

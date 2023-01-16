@@ -10,7 +10,7 @@ import Foundation
 //MARK: - Config
 
 struct DataSyncConfig {
-    let delegate: LocalCacheDelegate
+    var delegate: LocalCacheDelegate
     let session: String
     let userId: String
     var rootPath = ""

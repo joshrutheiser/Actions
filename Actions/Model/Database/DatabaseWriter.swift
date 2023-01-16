@@ -51,8 +51,9 @@ class DatabaseWriter {
     //MARK: - execute
     
     func commit() async throws {
-        try await writeBatch.commit()
+        let tempBatch = writeBatch
         reset()
+        try await tempBatch.commit()
     }
     
     //MARK: - Errors

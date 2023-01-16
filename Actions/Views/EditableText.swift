@@ -9,15 +9,16 @@ import Foundation
 import UIKit
 
 protocol EditableTextDelegate {
-    func textEvent(_ event: TextEvent)
+    func editEvent(_ event: EditEvent)
 }
 
-enum TextEvent {
+enum EditEvent {
     case Tapped
-    case Modified
     case Backspace
     case Enter(_ index: Int)
     case Save(_ text: String)
+    case Complete
+    case Modify
 }
 
 //MARK: - Editable Text
@@ -50,6 +51,10 @@ class EditableText: UITextView {
         isEditable = false
     }
     
+    func trimmedText() -> String {
+        return text.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
     private func setup() {
         isEditable = false
         delegate = self
@@ -60,9 +65,10 @@ class EditableText: UITextView {
         )
         addGestureRecognizer(tapRecognizer!)
     }
+    
 }
 
-//MARK: - Link support
+//MARK: - Hyperlink support
 
 extension EditableText {
     
@@ -80,7 +86,7 @@ extension EditableText {
         }
         
         startEditing(position)
-        editDelegate?.textEvent(.Tapped)
+        editDelegate?.editEvent(.Tapped)
     }
 }
 
@@ -89,18 +95,23 @@ extension EditableText {
 extension EditableText: UITextViewDelegate {
 
     func startEditing(_ position: UITextPosition) {
-        tapRecognizer?.isEnabled = false
-        isEditable = true
-        selectedTextRange = textRange(from: position, to: position)
-        becomeFirstResponder()
+        DispatchQueue.main.async {
+            self.tapRecognizer?.isEnabled = false
+            self.isEditable = true
+            self.selectedTextRange = self.textRange(
+                from: position,
+                to: position
+            )
+            self.becomeFirstResponder()
+        }
     }
     
     func stopEditing() {
         tapRecognizer?.isEnabled = true
         isEditable = false
         resignFirstResponder()
-        saveTimer.stop()
         text = trimmedText()
+        saveTimer.stop()
         save()
     }
     
@@ -111,14 +122,14 @@ extension EditableText: UITextViewDelegate {
     {
         if text.isEmpty && range.location == 0 && range.length == 0 {
             saveTimer.stop()
-            editDelegate?.textEvent(.Backspace)
+            editDelegate?.editEvent(.Backspace)
             return false
         }
         
         if text.last?.isNewline == true {
             saveTimer.stop()
             guard trimmedText().isEmpty == false else { return false }
-            editDelegate?.textEvent(.Enter(range.location))
+            editDelegate?.editEvent(.Enter(range.location))
             return false
         }
 
@@ -127,7 +138,7 @@ extension EditableText: UITextViewDelegate {
     }
     
     func textViewDidChange(_ textView: UITextView) {
-        editDelegate?.textEvent(.Modified)
+        editDelegate?.editEvent(.Modify)
     }
 }
 
@@ -135,16 +146,6 @@ extension EditableText: UITextViewDelegate {
 
 extension EditableText: SaveTimerDelegate {
     func save() {
-        Task(priority: .background) { [weak self] in
-            self?.editDelegate?.textEvent(.Save(text))
-        }
-    }
-}
-
-//MARK: - Private functions
-
-extension EditableText {
-    private func trimmedText() -> String {
-        return text.trimmingCharacters(in: .whitespacesAndNewlines)
+        editDelegate?.editEvent(.Save(text))
     }
 }

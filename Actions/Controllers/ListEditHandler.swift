@@ -39,8 +39,8 @@ extension ListEditHandler: ActionCellDelegate {
         case .Tapped:
             stopEditing()
             editingId = actionId
-        case .Backspace:
-            return
+        case .Backspace(let text):
+            backspace(actionId, text)
         case .Enter(let text, let index):
             enter(actionId, text, index)
         case .Save(let text):
@@ -113,8 +113,8 @@ extension ListEditHandler: ActionCellDelegate {
         // do all guards first before making changes so
         // things stay the same if there is an error
         // rather than the alternative of losing data
-        guard let rank = getRow(actionId) else { return }
-        guard let cell = getCell(actionId) else { return }
+        guard let rank = getRank(actionId) else { return }
+        guard let cell = getCell(rank) else { return }
         let (first, second) = text.split(index)
         guard let newId = try? model.write.createAction(
             second.trim(), rank: rank + 1
@@ -129,6 +129,34 @@ extension ListEditHandler: ActionCellDelegate {
         stopEditing()
         editingId = newId
     }
+    
+    //MARK: - Backspace
+    
+    private func backspace(
+        _ actionId: String,
+        _ text: String)
+    {
+        // do all guards first before making changes so
+        // things stay the same if there is an error
+        // rather than the alternative of losing data
+        guard let rank = getRank(actionId) else { return }
+        guard rank > 0 else { return }
+        guard let previous = getCell(rank - 1) else { return }
+        guard let prevId = previous.id else { return }
+        
+        let prevText = previous.getText()
+        let newText = prevText + text.trim()
+        let index = prevText.count
+        
+        // stop editing must be called after start to
+        // avoid keyboard animation glitch
+        previous.setText(newText)
+        save(prevId, newText)
+        startEditing(prevId, index)
+        stopEditing()
+        remove(actionId)
+        editingId = prevId
+    }
 }
 
 //MARK: - Helper functions
@@ -139,7 +167,7 @@ extension ListEditHandler {
     
     private func removeRow(_ actionId: String) {
         DispatchQueue.main.async {
-            guard let rank = self.getRow(actionId) else { return }
+            guard let rank = self.getRank(actionId) else { return }
             self.tableView.removeRow(rank)
         }
     }
@@ -147,28 +175,27 @@ extension ListEditHandler {
     //MARK: - Get cell
     
     private func getCell(_ actionId: String) -> ActionCell? {
-        let count = tableView.numberOfRows(inSection: 0)
-        
-        for i in 0..<count {
-            guard let cell = tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? ActionCell else { continue }
-            
-            if cell.id == actionId {
-                return cell
-            }
-        }
-        
-        return nil
+        guard let rank = getRank(actionId) else { return nil }
+        return getCell(rank)
     }
     
-    //MARK: - Get row
+    private func getCell(_ rank: Int) -> ActionCell? {
+        return tableView.cellForRow(
+            at: IndexPath(row: rank, section: 0)
+        ) as? ActionCell
+    }
+    
+    //MARK: - Get rank
     
     #warning ("TODO: create dictionary of actionid and row as part of data source")
     
-    private func getRow(_ actionId: String) -> Int? {
+    private func getRank(_ actionId: String) -> Int? {
         let count = tableView.numberOfRows(inSection: 0)
         
         for i in 0..<count {
-            guard let cell = tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? ActionCell else { continue }
+            guard let cell = tableView.cellForRow(
+                at: IndexPath(row: i, section: 0)
+            ) as? ActionCell else { continue }
             
             if cell.id == actionId {
                 return i

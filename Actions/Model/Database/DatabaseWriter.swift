@@ -58,6 +58,9 @@ class DatabaseWriter {
         let tempBatch = writeBatch
         reset()
         Task {
+            
+            #warning ("TODO: how to propagate errors from here to outside the Task")
+            
             try await tempBatch.commit()
         }
     }

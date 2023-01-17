@@ -14,9 +14,9 @@ protocol EditableTextDelegate {
 
 enum EditEvent {
     case Tapped
-    case Backspace
-    case Enter(_ text: String, _ index: Int)
-    case Save(_ text: String)
+    case Backspace(text: String)
+    case Enter(text: String, index: Int)
+    case Save(text: String)
     case Complete
     case Modify
 }
@@ -109,7 +109,6 @@ extension EditableText: UITextViewDelegate {
     func stopEditing() {
         tapRecognizer?.isEnabled = true
         isEditable = false
-//        resignFirstResponder()
         text = text.trim()
         saveTimer.stop()
         save()
@@ -122,15 +121,21 @@ extension EditableText: UITextViewDelegate {
     {
         if text.isEmpty && range.location == 0 && range.length == 0 {
             saveTimer.stop()
-            editDelegate?.editEvent(.Backspace)
+            editDelegate?.editEvent(
+                .Backspace(text: self.text)
+            )
             return false
         }
         
         if text.last?.isNewline == true {
             saveTimer.stop()
-            guard self.text.trim().isEmpty == false else { return false }
+            guard self.text.trim().isEmpty == false
+                else { return false }
             editDelegate?.editEvent(
-                .Enter(self.text, range.location)
+                .Enter(
+                    text: self.text,
+                    index: range.location
+                )
             )
             return false
         }
@@ -148,6 +153,8 @@ extension EditableText: UITextViewDelegate {
 
 extension EditableText: SaveTimerDelegate {
     func save() {
-        editDelegate?.editEvent(.Save(text))
+        editDelegate?.editEvent(
+            .Save(text: text)
+        )
     }
 }

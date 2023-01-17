@@ -22,13 +22,18 @@ protocol DataSource: UITableViewDataSource {
 }
 
 class BacklogDataSource: NSObject, DataSource {
-    var model: ModelController
     private let delegate: ActionCellDelegate
+    var model: ModelController
     var ids = [String]()
     
     init(_ model: ModelController, _ delegate: ActionCellDelegate) {
         self.model = model
         self.delegate = delegate
+        super.init()
+    }
+    
+    func reload() {
+        ids = model.read.getBacklog() ?? []
     }
     
     func register(_ tableView: UITableView) {
@@ -50,13 +55,4 @@ class BacklogDataSource: NSObject, DataSource {
         }
         return cell
     }
-    
-    func reload() {
-        do {
-            ids = try model.read.getBacklog()
-        } catch {
-            print(error.localizedDescription)
-        }
-    }
 }
-

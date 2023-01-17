@@ -31,6 +31,10 @@ class ReadController {
         return action
     }
     
+    func getActions() -> [String: Action]? {
+        return dataSync.getActions()
+    }
+    
     func getParentId(_ actionId: String) throws -> String? {
         let action = try getAction(actionId)
         return action.parentId
@@ -76,12 +80,10 @@ class ReadController {
         return try getUser().currentMode
     }
     
-    func getBacklog() throws -> [String] {
-        let user = try getUser()
+    func getBacklog() -> [String]? {
+        guard let user = try? getUser() else { return nil }
         let mode = user.currentMode
-        guard let backlog = user.backlog[mode] else {
-            throw ModelError.BacklogNotFound(mode)
-        }
+        guard let backlog = user.backlog[mode] else { return nil }
         return backlog
     }
     

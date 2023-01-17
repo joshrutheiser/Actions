@@ -50,10 +50,16 @@ class DatabaseWriter {
     
     //MARK: - execute
     
-    func commit() async throws {
+    func commit() throws {
+        // temporarily save the write batch
+        // and reset to free up batch writing for
+        // the next change, otherwise leads to
+        // write failures or data races
         let tempBatch = writeBatch
         reset()
-        try await tempBatch.commit()
+        Task {
+            try await tempBatch.commit()
+        }
     }
     
     //MARK: - Errors

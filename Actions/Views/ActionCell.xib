@@ -75,6 +75,7 @@
                 </constraints>
             </tableViewCellContentView>
             <connections>
+                <outlet property="checkmark" destination="aQl-7s-e9p" id="oEV-a2-yoI"/>
                 <outlet property="editText" destination="mcD-9G-HsY" id="CrW-cu-6pl"/>
             </connections>
             <point key="canvasLocation" x="109.9236641221374" y="19.366197183098592"/>

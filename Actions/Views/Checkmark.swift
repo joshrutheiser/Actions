@@ -27,6 +27,10 @@ class Checkmark: UIButton {
         super.prepareForInterfaceBuilder()
         setup()
     }
+    
+    func reset() {
+        setup()
+    }
 
     private func setup() {
         setImage(UIImage(systemName: "circle"), for: .normal)
@@ -56,7 +60,6 @@ class Checkmark: UIButton {
             }
         } completion: { complete in
             handler()
-            self.setImage(UIImage(systemName: "circle"), for: .normal)
         }
     }
 }

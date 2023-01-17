@@ -10,20 +10,19 @@ import Foundation
 //MARK: - Model Controller
 
 class ModelController {
+    private let dataSync: DataSync
     let read: ReadController
     let write: WriteController
 
     init(_ config: DataSyncConfig) {
-        let dataSync = DataSync(config)
+        dataSync = DataSync(config)
         read = ReadController(dataSync)
         write = WriteController(dataSync, read)
     }
     
-    convenience init(_ userId: String,
-        _ delegate: LocalCacheDelegate)
+    convenience init(_ userId: String)
     {
         let config = DataSyncConfig(
-            delegate: delegate,
             session: UUID().uuidString,
             userId: userId
         )
@@ -34,4 +33,23 @@ class ModelController {
         try await read.startListening()
     }
     
+    var user: User? {
+        get {
+            try? read.getUser()
+        }
+    }
+    
+    var actions: [String: Action]? {
+        get {
+            read.getActions()
+        }
+    }
+    
+    func addObserver(_ observer: LocalCacheObserver) {
+        dataSync.addObserver(observer)
+    }
+    
+    func removeObserver(_ observer: LocalCacheObserver) {
+        dataSync.removeObserver(observer)
+    }
 }

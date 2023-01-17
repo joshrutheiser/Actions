@@ -19,6 +19,7 @@ protocol ActionCellDelegate {
 }
 
 class ActionCell: UITableViewCell {
+    @IBOutlet weak var checkmark: Checkmark!
     @IBOutlet weak var editText: EditableText!
     var id: String?
     var delegate: ActionCellDelegate?
@@ -31,6 +32,7 @@ class ActionCell: UITableViewCell {
 
     override func prepareForReuse() {
         editText.reset()
+        checkmark.reset()
         id = nil
         delegate = nil
     }
@@ -40,7 +42,7 @@ class ActionCell: UITableViewCell {
     }
     
     func getText() -> String {
-        return editText.trimmedText()
+        return editText.text.trim()
     }
     
     @IBAction func completePressed(_ sender: UIButton) {
@@ -50,6 +52,10 @@ class ActionCell: UITableViewCell {
     
     func stopEditing() {
         editText.stopEditing()
+    }
+    
+    func startEditing(_ index: Int) {
+        editText.startEditing(index)
     }
 }
 

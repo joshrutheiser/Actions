@@ -15,7 +15,7 @@ protocol EditableTextDelegate {
 enum EditEvent {
     case Tapped
     case Backspace
-    case Enter(_ index: Int)
+    case Enter(_ text: String, _ index: Int)
     case Save(_ text: String)
     case Complete
     case Modify
@@ -49,10 +49,6 @@ class EditableText: UITextView {
     func reset() {
         tapRecognizer?.isEnabled = true
         isEditable = false
-    }
-    
-    func trimmedText() -> String {
-        return text.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
     private func setup() {
@@ -95,22 +91,26 @@ extension EditableText {
 extension EditableText: UITextViewDelegate {
 
     func startEditing(_ position: UITextPosition) {
-        DispatchQueue.main.async {
-            self.tapRecognizer?.isEnabled = false
-            self.isEditable = true
-            self.selectedTextRange = self.textRange(
-                from: position,
-                to: position
-            )
-            self.becomeFirstResponder()
-        }
+        tapRecognizer?.isEnabled = false
+        isEditable = true
+        selectedTextRange = textRange(
+            from: position,
+            to: position
+        )
+        becomeFirstResponder()
+    }
+    
+    func startEditing(_ index: Int) {
+        let beginning = beginningOfDocument
+        guard let position = position(from: beginning, offset: index) else { return }
+        startEditing(position)
     }
     
     func stopEditing() {
         tapRecognizer?.isEnabled = true
         isEditable = false
-        resignFirstResponder()
-        text = trimmedText()
+//        resignFirstResponder()
+        text = text.trim()
         saveTimer.stop()
         save()
     }
@@ -128,8 +128,10 @@ extension EditableText: UITextViewDelegate {
         
         if text.last?.isNewline == true {
             saveTimer.stop()
-            guard trimmedText().isEmpty == false else { return false }
-            editDelegate?.editEvent(.Enter(range.location))
+            guard self.text.trim().isEmpty == false else { return false }
+            editDelegate?.editEvent(
+                .Enter(self.text, range.location)
+            )
             return false
         }
 

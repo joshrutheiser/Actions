@@ -10,7 +10,6 @@ import Foundation
 //MARK: - Config
 
 struct DataSyncConfig {
-    var delegate: LocalCacheDelegate
     let session: String
     let userId: String
     var rootPath = ""
@@ -28,7 +27,17 @@ class DataSync {
         self.config = config
         reader = DatabaseReader(config.rootPath)
         writer = DatabaseWriter(config.rootPath)
-        cache = LocalCache(config.delegate)
+        cache = LocalCache()
+    }
+    
+    //MARK: - Observers
+    
+    func addObserver(_ observer: LocalCacheObserver) {
+        cache.observers.append(observer)
+    }
+    
+    func removeObserver(_ observer: LocalCacheObserver) {
+        cache.observers.removeAll(where: { $0 === observer })
     }
        
     // initial load and then listens to database changes
@@ -62,7 +71,7 @@ class DataSync {
             // session changes are published to cache directly
             guard result.object.lastSession != self.config.session else { return }
             self.cache.setUser(result.object)
-            self.cache.notify()
+            self.cache.notify(source: .External)
         }
     }
     
@@ -78,7 +87,7 @@ class DataSync {
         
         let results = try await reader.getDocuments(loadQuery, as: Action.self)
         cache.setActions(results)
-        cache.notify()
+        cache.notify(source: .External)
         
         // set up listener for only new changes
         let listenQuery = QueryBuilder(Action.self)
@@ -93,7 +102,7 @@ class DataSync {
             guard filtered.isEmpty == false else { return }
             
             self.cache.setActions(filtered)
-            self.cache.notify()
+            self.cache.notify(source: .External)
         }
     }
     
@@ -156,10 +165,10 @@ class DataSync {
     
     //MARK: - Commit
     
-    func commit(notify: Bool = true) async throws {
+    func commit(notify: Bool = true) throws {
         if notify {
-            cache.notify()
+            cache.notify(source: .Internal)
         }
-        try await writer.commit()
+        try writer.commit()
     }
 }

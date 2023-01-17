@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+#warning ("TODO: figure out how to handle database write errors")
 class WriteController {
     private let dataSync: DataSync
     private let read: ReadController
@@ -20,19 +20,6 @@ class WriteController {
     
     //MARK: - Create action
     // parentId of nil == backlog
-
-    @discardableResult
-    func createAction(
-        _ text: String,
-        parentId: String? = nil,
-        rank: Int = 0) async throws -> String?
-    {
-        let action = Action(text, parentId)
-        let actionId = try dataSync.createAction(action)
-        try insert(actionId, into: parentId, at: rank)
-        try await dataSync.commit()
-        return actionId
-    }
     
     func createAction(
         _ text: String,
@@ -42,9 +29,7 @@ class WriteController {
         let action = Action(text, parentId)
         let actionId = try dataSync.createAction(action)
         try insert(actionId, into: parentId, at: rank)
-        Task {
-            try await self.dataSync.commit()
-        }
+        try dataSync.commit()
         return actionId
     }
     
@@ -54,30 +39,30 @@ class WriteController {
     func moveActionTo(
         _ actionId: String,
         parentId: String?,
-        rank: Int = 0) async throws
+        rank: Int = 0) throws
     {
         try remove(child: actionId)
         try insert(actionId, into: parentId, at: rank)
         var action = try read.getAction(actionId)
         action.parentId = parentId
         try dataSync.updateAction(action)
-        try await dataSync.commit()
+        try dataSync.commit()
     }
     
     // Move within parent
     
     func moveAction(
         _ actionId: String,
-        rank: Int = 0) async throws
+        rank: Int = 0) throws
     {
         let parentId = try read.getParentId(actionId)
-        try await moveActionTo(actionId, parentId: parentId, rank: rank)
+        try moveActionTo(actionId, parentId: parentId, rank: rank)
     }
     
     //MARK: - Complete action
     // Don't remove from cache in case user wants to undo
     
-    func completeAction(_ actionId: String) async throws
+    func completeAction(_ actionId: String) throws
     {
         try remove(child: actionId)
         try setComplete(actionId)
@@ -85,12 +70,12 @@ class WriteController {
         for id in childIds {
             try setComplete(id)
         }
-        try await dataSync.commit()
+        try dataSync.commit()
     }
     
     //MARK: - Delete action
     
-    func deleteAction(_ actionId: String) async throws
+    func deleteAction(_ actionId: String) throws
     {
         try remove(child: actionId)
         try setDelete(actionId)
@@ -98,24 +83,24 @@ class WriteController {
         for id in childIds {
             try setDelete(id)
         }
-        try await dataSync.commit()
+        try dataSync.commit()
     }
     
     //MARK: - Save action text
     
     func saveActionText(
         _ actionId: String,
-        _ text: String) async throws
+        _ text: String) throws
     {
         var action = try read.getAction(actionId)
         action.text = text
         try dataSync.updateAction(action)
-        try await dataSync.commit(notify: false)
+        try dataSync.commit(notify: false)
     }
     
     //MARK: - Toggle mode
     
-    func toggleMode() async throws {
+    func toggleMode() throws {
         var user = try read.getUser()
         guard let mode = Mode.init(rawValue: user.currentMode) else {
             throw ModelError.InvalidModeSet(user.currentMode)
@@ -125,18 +110,18 @@ class WriteController {
             case .Work: user.currentMode = Mode.Personal.rawValue
         }
         try dataSync.updateUser(user)
-        try await dataSync.commit()
+        try dataSync.commit()
     }
     
     //MARK: - Skip
     
-    func skip(_ actionId: String) async throws
+    func skip(_ actionId: String) throws
     {
         var action = try read.getAction(actionId)
         action.skipped += 1
         action.lastSkipped = Date()
         try dataSync.updateAction(action)
-        try await dataSync.commit()
+        try dataSync.commit()
     }
     
     
@@ -144,12 +129,12 @@ class WriteController {
     
     func schedule(
         _ actionId: String,
-        _ schedule: Date) async throws
+        _ schedule: Date) throws
     {
         var action = try read.getAction(actionId)
         action.scheduledDate = schedule
         try dataSync.updateAction(action)
-        try await dataSync.commit()
+        try dataSync.commit()
     }
     
 }

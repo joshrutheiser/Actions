@@ -11,7 +11,7 @@ import UIKit
 class MainController: UIViewController {
     
     @IBOutlet weak var content: UIView!
-    lazy var model = ModelController(UUID().uuidString, self)
+    lazy var model = ModelController(UUID().uuidString)
     lazy var list = ListController(model)
     
     override func viewDidLoad() {
@@ -24,18 +24,11 @@ class MainController: UIViewController {
                 try await self.model.write.createAction("A")
                 try await self.model.write.createAction("B http://google.com", rank: 1)
                 try await self.model.write.createAction("C", rank: 2)
+//                await self.list.dataSource.reload()
                 await self.list.reload()
             } catch {
                 print(error)
             }
         }
-    }
-    
-    
-}
-
-extension MainController: LocalCacheDelegate {
-    func dataUpdated() {
-        list.reload()
     }
 }

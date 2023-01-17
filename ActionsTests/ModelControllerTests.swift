@@ -8,7 +8,7 @@
 import XCTest
 @testable import Actions
 
-final class ModelControllerTests: XCTestCase, LocalCacheDelegate {
+final class ModelControllerTests: XCTestCase, LocalCacheObserver {
     var config: DataSyncConfig!
     var model: ModelController!
     var testPath: String!

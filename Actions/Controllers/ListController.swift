@@ -25,10 +25,15 @@ class ListController: UIViewController {
     init(_ model: ModelController) {
         self.model = model
         super.init(nibName: nil, bundle: nil)
+        model.addObserver(self)
     }
     
     required init?(coder: NSCoder) {
         fatalError("unsupported")
+    }
+    
+    deinit {
+        model.removeObserver(self)
     }
     
     override func viewDidLoad() {
@@ -41,9 +46,22 @@ class ListController: UIViewController {
     }
     
     func reload() {
-        dataSource.reload()
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }
     }
+    
+    
+}
+
+extension ListController: LocalCacheObserver {
+    func dataUpdated(source: UpdateSource) {
+        print("Data updated: \(source)")
+        dataSource.reload()
+        if source == .External {
+            reload()
+        }
+    }
+    
+    
 }

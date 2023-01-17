@@ -9,8 +9,13 @@ import Foundation
 
 //MARK: - Local Cache Delegate
 
-protocol LocalCacheDelegate {
-    func dataUpdated()
+protocol LocalCacheObserver: NSObject {
+    func dataUpdated(source: UpdateSource)
+}
+
+enum UpdateSource {
+    case Internal
+    case External
 }
 
 //MARK: - Local Cache
@@ -18,11 +23,7 @@ protocol LocalCacheDelegate {
 struct LocalCache {
     var user: User?
     var actions: [String: Action]?
-    var delegate: LocalCacheDelegate
-        
-    init(_ delegate: LocalCacheDelegate) {
-        self.delegate = delegate
-    }
+    var observers = [LocalCacheObserver]()
     
     //MARK: - Set user
     
@@ -71,7 +72,7 @@ struct LocalCache {
     
     //MARK: - Notify
     
-    func notify() {
-        delegate.dataUpdated()
+    func notify(source: UpdateSource) {
+        observers.forEach({ $0.dataUpdated(source: source) })
     }
 }

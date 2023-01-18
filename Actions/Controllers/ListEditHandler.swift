@@ -30,21 +30,28 @@ extension ListEditHandler: ActionCellDelegate {
         print("Action: \(actionId), Event: \(event)")
 
         DispatchQueue.main.async {
-            switch event {
-            case .Tapped:
-                self.stopEditing()
-                self.editingId = actionId
-            case .Backspace(let text):
-                self.backspace(actionId, text)
-            case .Enter(let text, let index):
-                self.enter(actionId, text, index)
-            case .Save(let text):
-                self.save(actionId, text)
-            case .Complete:
-                self.complete(actionId)
-            case .Modify:
-                self.tableView.updateHeight()
-            }
+            self.handleEvent(actionId, event)
+        }
+    }
+    
+    private func handleEvent(
+        _ actionId: String,
+        _ event: EditEvent)
+    {
+        switch event {
+        case .Tapped:
+            stopEditing()
+            editingId = actionId
+        case .Backspace(let text):
+            backspace(actionId, text)
+        case .Enter(let text, let index):
+            enter(actionId, text, index)
+        case .Save(let text):
+            save(actionId, text)
+        case .Complete:
+            complete(actionId)
+        case .Modify:
+            tableView.updateHeight()
         }
     }
     
@@ -106,22 +113,34 @@ extension ListEditHandler: ActionCellDelegate {
         _ text: String,
         _ index: Int)
     {
-        // do all guards first before making changes so
+        // do guards first before making changes so
         // things stay the same if there is an error
         // rather than the alternative of losing data
         guard let rank = getRank(actionId) else { return }
         guard let cell = getCell(rank) else { return }
         let (first, second) = text.split(index)
-        guard let newId = try? model.write.createAction(
-            second.trim(), rank: rank + 1
-        ) else { return }
         
-        #warning ("TODO: implement functionality for pressing enter at beginning of text")
+        var newId: String?
+        // If cursor is at the beginning of text, then create new action
+        // before the current action. Otherwise, split the text in two and
+        // create a new action with the second half after the current action
+        if index == 0 {
+            newId = try? model.write.createAction(
+                first.trim(), rank: rank
+            )
+            tableView.addRow(rank)
+        } else {
+            newId = try? model.write.createAction(
+                second.trim(), rank: rank + 1
+            )
+            cell.setText(first.trim())
+            save(actionId, first.trim())
+            tableView.addRow(rank + 1)
+        }
+        guard let newId = newId else { return }
+        
         // stop editing must be called after start to
         // avoid keyboard animation glitch
-        cell.setText(first.trim())
-        save(actionId, first.trim())
-        tableView.addRow(rank + 1)
         startEditing(newId, 0)
         stopEditing()
         editingId = newId

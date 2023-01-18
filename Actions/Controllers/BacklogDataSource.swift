@@ -8,12 +8,6 @@
 import Foundation
 import UIKit
 
-/*
- 
- Responsibility = read data from model and build cells
- 
- */
-
 protocol DataSource: UITableViewDataSource {
     var model: ModelController { get }
     var ids: [String] { get set }

@@ -8,12 +8,6 @@
 import UIKit
 import Firebase
 
-/*
- 
- Responsibility = Build list view
- 
- */
-
 class ListController: UIViewController {
     let model: ModelController
     let tableView = UITableView()
@@ -55,13 +49,12 @@ class ListController: UIViewController {
 }
 
 extension ListController: LocalCacheObserver {
+    
     func dataUpdated(source: UpdateSource) {
-        print("Data updated: \(source)")
         dataSource.reload()
         if source == .External {
             reload()
         }
     }
-    
     
 }

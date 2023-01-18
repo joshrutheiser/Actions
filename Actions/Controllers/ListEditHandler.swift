@@ -8,12 +8,6 @@
 import Foundation
 import UIKit
 
-/*
- 
- Responsibility = handle edit events
- 
- */
-
 class ListEditHandler {
     private let model: ModelController
     private let tableView: UITableView
@@ -35,20 +29,20 @@ extension ListEditHandler: ActionCellDelegate {
     {
         print("Action: \(actionId), Event: \(event)")
 
-        switch event {
-        case .Tapped:
-            stopEditing()
-            editingId = actionId
-        case .Backspace(let text):
-            backspace(actionId, text)
-        case .Enter(let text, let index):
-            enter(actionId, text, index)
-        case .Save(let text):
-            save(actionId, text)
-        case .Complete:
-            complete(actionId)
-        case .Modify:
-            DispatchQueue.main.async {
+        DispatchQueue.main.async {
+            switch event {
+            case .Tapped:
+                self.stopEditing()
+                self.editingId = actionId
+            case .Backspace(let text):
+                self.backspace(actionId, text)
+            case .Enter(let text, let index):
+                self.enter(actionId, text, index)
+            case .Save(let text):
+                self.save(actionId, text)
+            case .Complete:
+                self.complete(actionId)
+            case .Modify:
                 self.tableView.updateHeight()
             }
         }
@@ -81,17 +75,19 @@ extension ListEditHandler: ActionCellDelegate {
     }
     
     //MARK: - Complete
-    
+
     private func complete(_ actionId: String) {
+        guard let rank = getRank(actionId) else { return }
         try? model.write.completeAction(actionId)
-        removeRow(actionId)
+        tableView.removeRow(rank)
     }
     
     //MARK: - Remove
     
     private func remove(_ actionId: String) {
+        guard let rank = getRank(actionId) else { return }
         try? model.write.deleteAction(actionId)
-        removeRow(actionId)
+        tableView.removeRow(rank)
     }
     
     //MARK: - Save
@@ -120,6 +116,7 @@ extension ListEditHandler: ActionCellDelegate {
             second.trim(), rank: rank + 1
         ) else { return }
         
+        #warning ("TODO: implement functionality for pressing enter at beginning of text")
         // stop editing must be called after start to
         // avoid keyboard animation glitch
         cell.setText(first.trim())
@@ -163,45 +160,28 @@ extension ListEditHandler: ActionCellDelegate {
 
 extension ListEditHandler {
     
-    //MARK: - Remove row
-    
-    private func removeRow(_ actionId: String) {
-        DispatchQueue.main.async {
-            guard let rank = self.getRank(actionId) else { return }
-            self.tableView.removeRow(rank)
-        }
-    }
-    
     //MARK: - Get cell
     
     private func getCell(_ actionId: String) -> ActionCell? {
         guard let rank = getRank(actionId) else { return nil }
         return getCell(rank)
     }
-    
+
     private func getCell(_ rank: Int) -> ActionCell? {
-        return tableView.cellForRow(
-            at: IndexPath(row: rank, section: 0)
-        ) as? ActionCell
+        // try and get the cell if it is visibile or in cache
+        // if not, then get it from the data source directly
+        let indexPath = IndexPath(row: rank, section: 0)
+        if let cell = tableView.cellForRow(at: indexPath) as? ActionCell {
+            return cell
+        }
+        guard let data = tableView.dataSource as? DataSource else { return nil }
+        return data.tableView(tableView, cellForRowAt: indexPath) as? ActionCell
     }
     
     //MARK: - Get rank
     
-    #warning ("TODO: create dictionary of actionid and row as part of data source")
-    
     private func getRank(_ actionId: String) -> Int? {
-        let count = tableView.numberOfRows(inSection: 0)
-        
-        for i in 0..<count {
-            guard let cell = tableView.cellForRow(
-                at: IndexPath(row: i, section: 0)
-            ) as? ActionCell else { continue }
-            
-            if cell.id == actionId {
-                return i
-            }
-        }
-        
-        return nil
+        guard let data = tableView.dataSource as? DataSource else { return nil }
+        return data.ids.firstIndex(of: actionId)
     }
 }

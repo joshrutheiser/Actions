@@ -14,6 +14,8 @@ import UIKit
  
  */
 
+#warning ("TODO: analyze memory and figure out how to find retain cycles and how to prevent memory increase every time a new action is created")
+
 protocol ActionCellDelegate {
     func handleEditEvent(_ actionId: String, _ event: EditEvent)
 }

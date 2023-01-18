@@ -61,6 +61,14 @@ class DatabaseWriter {
             
             #warning ("TODO: how to propagate errors from here to outside the Task")
             
+            /*
+             
+             https://stackoverflow.com/questions/70314263/throwing-erros-inside-a-root-task
+             
+             could use completion handlers
+             
+             */
+            
             try await tempBatch.commit()
         }
     }
@@ -71,3 +79,4 @@ class DatabaseWriter {
         case ModelUpdateMissingId(_ model: Any)
     }
 }
+

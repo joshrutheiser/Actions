@@ -46,7 +46,7 @@ class BacklogDataSource: NSObject, DataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ActionCell", for: indexPath) as! ActionCell
-        
+
         let actionId = ids[indexPath.row]
         if let action = try? model.read.getAction(actionId) {
             cell.id = actionId

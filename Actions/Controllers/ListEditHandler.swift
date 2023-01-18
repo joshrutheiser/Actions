@@ -188,7 +188,7 @@ extension ListEditHandler {
 
     private func getCell(_ rank: Int) -> ActionCell? {
         // try and get the cell if it is visibile or in cache
-        // if not, then get it from the data source directly
+        // otherwise, get it from the data source directly
         let indexPath = IndexPath(row: rank, section: 0)
         if let cell = tableView.cellForRow(at: indexPath) as? ActionCell {
             return cell

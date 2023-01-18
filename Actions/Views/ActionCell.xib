@@ -23,7 +23,7 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hat-Sv-9Oa">
                                 <rect key="frame" x="0.0" y="0.0" width="27" height="35"/>
                                 <subviews>
-                                    <button contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="top" adjustsImageWhenHighlighted="NO" adjustsImageWhenDisabled="NO" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aQl-7s-e9p" customClass="Checkmark" customModule="Actions" customModuleProvider="target">
+                                    <button contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="top" adjustsImageWhenHighlighted="NO" adjustsImageWhenDisabled="NO" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aQl-7s-e9p">
                                         <rect key="frame" x="0.0" y="0.0" width="27" height="27"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="27" id="3Ar-7u-zS4"/>

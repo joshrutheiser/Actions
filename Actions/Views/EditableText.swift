@@ -5,6 +5,8 @@
 //  Created by Josh Rutheiser on 1/12/23.
 //
 
+#warning ("TODO: load accessory bar")
+
 import Foundation
 import UIKit
 
@@ -28,7 +30,8 @@ class EditableText: UITextView {
     lazy var saveTimer = SaveTimer()
     var editDelegate: EditableTextDelegate?
     var tapRecognizer: UITapGestureRecognizer?
-
+    var lastSaved: String?
+    
     //MARK: - Setup
     
     override init(frame: CGRect, textContainer: NSTextContainer?) {
@@ -147,14 +150,22 @@ extension EditableText: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         editDelegate?.editEvent(.Modify)
     }
+    
+    // initialize last saved text
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        lastSaved = textView.text
+    }
 }
 
 //MARK: - Save
 
 extension EditableText: SaveTimerDelegate {
     func save() {
+        // don't save if text hasn't changed
+        guard text.trim() != lastSaved?.trim() else { return }
         editDelegate?.editEvent(
             .Save(text: text)
         )
+        lastSaved = text
     }
 }

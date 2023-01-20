@@ -8,12 +8,7 @@
 import Foundation
 import UIKit
 
-protocol DataSource: UITableViewDataSource {
-    var model: ModelController { get }
-    var ids: [String] { get set }
-    func register(_ tableView: UITableView)
-    func reload()
-}
+//MARK: - Backlog data source
 
 class BacklogDataSource: NSObject, DataSource {
     private let delegate: ActionCellDelegate

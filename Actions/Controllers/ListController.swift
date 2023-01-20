@@ -42,6 +42,7 @@ class ListController: UIViewController {
     func reload() {
         DispatchQueue.main.async {
             self.tableView.reloadData()
+            self.listEditor.stopEditing()
         }
     }
     

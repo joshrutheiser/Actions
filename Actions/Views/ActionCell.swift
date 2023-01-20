@@ -49,6 +49,15 @@ class ActionCell: UITableViewCell {
     }
 }
 
+//MARK: - Send Event
+
+extension ActionCell: EditableTextDelegate {
+    func editEvent(_ event: EditEvent) {
+        guard let id = id else { return }
+        delegate?.handleEditEvent(id, event)
+    }
+}
+
 //MARK: - Complete
 
 extension ActionCell {
@@ -73,13 +82,4 @@ extension ActionCell {
         }
     }
     
-}
-
-//MARK: - Send Event
-
-extension ActionCell: EditableTextDelegate {
-    func editEvent(_ event: EditEvent) {
-        guard let id = id else { return }
-        delegate?.handleEditEvent(id, event)
-    }
 }

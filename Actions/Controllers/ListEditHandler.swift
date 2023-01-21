@@ -52,6 +52,8 @@ extension ListEditHandler: ActionCellDelegate {
             complete(actionId)
         case .Modify:
             tableView.updateHeight()
+        case .Done:
+            stopEditing()
         }
     }
     

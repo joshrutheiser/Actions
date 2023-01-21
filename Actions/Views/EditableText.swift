@@ -21,12 +21,14 @@ enum EditEvent {
     case Save(text: String)
     case Complete
     case Modify
+    case Done
 }
 
 //MARK: - Editable Text
 
 @IBDesignable
 class EditableText: UITextView {
+    var editBar: EditBar = EditBar.fromNib()
     lazy var saveTimer = SaveTimer()
     var editDelegate: EditableTextDelegate?
     var tapRecognizer: UITapGestureRecognizer?
@@ -63,6 +65,8 @@ class EditableText: UITextView {
             action: #selector(tapped(recognizer:))
         )
         addGestureRecognizer(tapRecognizer!)
+        inputAccessoryView = editBar
+        editBar.delegate = self
     }
     
 }
@@ -168,4 +172,23 @@ extension EditableText: SaveTimerDelegate {
         )
         lastSaved = text
     }
+}
+
+//MARK: - Edit Bar
+
+extension EditableText: EditBarDelegate {
+    func actionHighPressed() {
+    }
+    
+    func actionMedPressed() {
+    }
+    
+    func actionLowPressed() {
+    }
+    
+    func actionDonePressed() {
+        editDelegate?.editEvent(.Done)
+    }
+    
+    
 }

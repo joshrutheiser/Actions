@@ -5,8 +5,6 @@
 //  Created by Josh Rutheiser on 1/12/23.
 //
 
-#warning ("TODO: load accessory bar")
-
 import Foundation
 import UIKit
 

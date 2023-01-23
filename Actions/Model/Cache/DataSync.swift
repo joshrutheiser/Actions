@@ -61,7 +61,7 @@ class DataSync {
         let results = try await reader.getDocuments(query, as: User.self)
         if results.first?.object == nil {
             try createUser()
-            try await commit()
+            try commit()
         }
         
         reader.listenDocuments(query, as: User.self) {

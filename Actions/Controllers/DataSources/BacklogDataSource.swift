@@ -33,6 +33,12 @@ class BacklogDataSource: NSObject, DataSource {
         ids.count
     }
     
+    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath)
+    {
+        let actionId = ids[sourceIndexPath.row]
+        try? model.write.moveAction(actionId, rank: destinationIndexPath.row)
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ActionCell", for: indexPath) as! ActionCell
 
@@ -44,4 +50,5 @@ class BacklogDataSource: NSObject, DataSource {
         }
         return cell
     }
+    
 }

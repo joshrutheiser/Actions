@@ -82,9 +82,6 @@
         </tableViewCell>
     </objects>
     <designables>
-        <designable name="aQl-7s-e9p">
-            <size key="intrinsicContentSize" width="49.666666666666664" height="34.333333333333336"/>
-        </designable>
         <designable name="mcD-9G-HsY">
             <size key="intrinsicContentSize" width="56.333333333333336" height="35.333333333333336"/>
         </designable>

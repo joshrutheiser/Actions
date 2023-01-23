@@ -6,13 +6,16 @@
 //
 
 import UIKit
-import Firebase
+
+//MARK: - List Controller
 
 class ListController: UIViewController {
-    let model: ModelController
-    let tableView = UITableView()
     lazy var listEditor = ListEditHandler(model, tableView)
     lazy var dataSource: DataSource = BacklogDataSource(model, listEditor)
+    lazy var listSwiper = ListSwiper(dataSource, listEditor)
+    let model: ModelController
+    let tableView = UITableView()
+    var addButton: AddButton?
     
     // add parent id, null is backlog
     
@@ -34,9 +37,19 @@ class ListController: UIViewController {
         super.viewDidLoad()
         dataSource.register(tableView)
         tableView.dataSource = dataSource
+        tableView.dragDelegate = self
+        tableView.delegate = listSwiper
         tableView.showsVerticalScrollIndicator = false
         tableView.separatorStyle = .none
         view.addChildView(tableView)
+        
+        addButton = AddButton(view)
+        addButton?.addTarget(
+            self,
+            action: #selector(addPressed),
+            for: .touchUpInside
+        )
+        view.addSubview(addButton!)
     }
     
     func reload() {
@@ -49,13 +62,36 @@ class ListController: UIViewController {
     
 }
 
+//MARK: - Drag and drop
+
+extension ListController: UITableViewDragDelegate
+{
+    func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
+        let dragItem = UIDragItem(itemProvider: NSItemProvider())
+        dragItem.localObject = dataSource.ids[indexPath.row]
+        return [dragItem]
+    }
+}
+
+//MARK: - Add pressed
+
+extension ListController {
+    @objc func addPressed() {
+        DispatchQueue.main.async {
+            self.listEditor.add()
+        }
+    }
+}
+
+
+//MARK: - Data updated
+
 extension ListController: LocalCacheObserver {
-    
     func dataUpdated(source: UpdateSource) {
         dataSource.reload()
         if source == .External {
             reload()
         }
     }
-    
 }
+

@@ -11,6 +11,7 @@ import UIKit
 class ListEditHandler {
     private let model: ModelController
     private let tableView: UITableView
+    private var parentId: String?
     private var editingId: String?
     
     init(_ model: ModelController, _ tableView: UITableView) {
@@ -128,12 +129,12 @@ extension ListEditHandler: ActionCellDelegate {
         // create a new action with the second half after the current action
         if index == 0 {
             newId = try? model.write.createAction(
-                first.trim(), rank: rank
+                first.trim(), parentId: parentId, rank: rank
             )
             tableView.addRow(rank)
         } else {
             newId = try? model.write.createAction(
-                second.trim(), rank: rank + 1
+                second.trim(), parentId: parentId, rank: rank + 1
             )
             cell.setText(first.trim())
             save(actionId, first.trim())
@@ -175,6 +176,31 @@ extension ListEditHandler: ActionCellDelegate {
         remove(actionId)
         editingId = prevId
     }
+}
+
+extension ListEditHandler {
+    
+    //MARK: - Add
+    
+    func add() {
+        let newId = try? model.write.createAction(
+            "", parentId: parentId, rank: 0
+        )
+        tableView.addRow(0)
+        guard let newId = newId else { return }
+        startEditing(newId, 0)
+        editingId = newId
+    }
+    
+    //MARK: - Delete
+    
+    func delete(_ actionId: String) {
+        remove(actionId)
+        if actionId == editingId {
+            editingId = nil
+        }
+    }
+    
 }
 
 //MARK: - Helper functions

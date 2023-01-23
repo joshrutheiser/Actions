@@ -2,15 +2,12 @@
 //  EditBar.swift
 //  Action
 //
-//  Created by Josh Rutheiser on 6/18/22.
+//  Created by Josh Rutheiser on 1/20/23.
 //
 
 import UIKit
 
 protocol EditBarDelegate {
-    func actionHighPressed()
-    func actionMedPressed()
-    func actionLowPressed()
     func actionDonePressed()
 }
 

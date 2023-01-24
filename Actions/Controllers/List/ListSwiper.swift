@@ -48,22 +48,13 @@ extension ListSwiper: UITableViewDelegate {
         
         let skip = UIContextualAction(style: .normal, title: "Skip") { (action, view, completionHandler) in
             
-
+            let actionId = self.dataSource.ids[indexPath.row]
+            self.listEditor.skip(actionId)
+            
             completionHandler(true)
         }
 
         skip.backgroundColor = UIColor(named: "ConstructiveAction")
-        
-        //MARK: - Schedule
-        
-        let schedule = UIContextualAction(style: .normal, title: "Schedule") { (action, view, completionHandler) in
-            
-
-            completionHandler(true)
-        }
-
-        schedule.backgroundColor = UIColor(named: "ConstructiveAction2")
-        
-        return UISwipeActionsConfiguration(actions: [skip, schedule])
+        return UISwipeActionsConfiguration(actions: [skip])
     }
 }

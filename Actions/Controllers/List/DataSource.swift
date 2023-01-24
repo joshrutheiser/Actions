@@ -1,5 +1,5 @@
 //
-//  BacklogDataSource.swift
+//  Data Source.swift
 //  Actions
 //
 //  Created by Josh Rutheiser on 1/7/23.
@@ -8,12 +8,13 @@
 import Foundation
 import UIKit
 
-//MARK: - Backlog data source
+//MARK: - Data Source
 
-class BacklogDataSource: NSObject, DataSource {
+class DataSource: NSObject, UITableViewDataSource {
     private let delegate: ActionCellDelegate
     var model: ModelController
     var ids = [String]()
+    var ranks = [String: Int]()
     
     init(_ model: ModelController, _ delegate: ActionCellDelegate) {
         self.model = model
@@ -21,8 +22,16 @@ class BacklogDataSource: NSObject, DataSource {
         super.init()
     }
     
+    func storedRank(_ actionId: String) -> Int? {
+        return ranks[actionId]
+    }
+    
     func reload() {
         ids = model.read.getBacklog() ?? []
+        for i in 0..<ids.count {
+            let id = ids[i]
+            ranks[id] = i
+        }
     }
     
     func register(_ tableView: UITableView) {

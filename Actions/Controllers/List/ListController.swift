@@ -11,7 +11,7 @@ import UIKit
 
 class ListController: UIViewController {
     lazy var listEditor = ListEditHandler(model, tableView)
-    lazy var dataSource: DataSource = BacklogDataSource(model, listEditor)
+    lazy var dataSource = DataSource(model, listEditor)
     lazy var listSwiper = ListSwiper(dataSource, listEditor)
     let model: ModelController
     let tableView = UITableView()

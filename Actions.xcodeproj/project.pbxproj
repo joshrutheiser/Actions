@@ -11,7 +11,7 @@
 		0346E09B296640AA00C25FBD /* ReadController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0346E09A296640AA00C25FBD /* ReadController.swift */; };
 		0346E09F2966AE6C00C25FBD /* ModelError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0346E09E2966AE6C00C25FBD /* ModelError.swift */; };
 		0346E0A12966B8C700C25FBD /* CacheError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0346E0A02966B8C700C25FBD /* CacheError.swift */; };
-		0346E0A3296A8C5000C25FBD /* BacklogDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0346E0A2296A8C5000C25FBD /* BacklogDataSource.swift */; };
+		0346E0A3296A8C5000C25FBD /* DataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0346E0A2296A8C5000C25FBD /* DataSource.swift */; };
 		039E5A21296BC84D00A18626 /* ActionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 039E5A1F296BC84D00A18626 /* ActionCell.swift */; };
 		039E5A22296BC84D00A18626 /* ActionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 039E5A20296BC84D00A18626 /* ActionCell.xib */; };
 		039E5A282970C19400A18626 /* EditableText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 039E5A272970C19400A18626 /* EditableText.swift */; };
@@ -20,7 +20,6 @@
 		039E5A352974BF0C00A18626 /* MainController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 039E5A342974BF0C00A18626 /* MainController.swift */; };
 		039E5A372974C00800A18626 /* ViewUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 039E5A362974C00800A18626 /* ViewUtilities.swift */; };
 		039E5A3929765C3100A18626 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 039E5A3829765C3100A18626 /* String.swift */; };
-		03A279B0297890FE009FBB86 /* DataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A279AF297890FE009FBB86 /* DataSource.swift */; };
 		03A279B3297B3376009FBB86 /* EditBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A279B1297B3375009FBB86 /* EditBar.swift */; };
 		03A279B4297B3376009FBB86 /* EditBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = 03A279B2297B3376009FBB86 /* EditBar.xib */; };
 		03A279B6297BCF87009FBB86 /* AddButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A279B5297BCF87009FBB86 /* AddButton.swift */; };
@@ -71,7 +70,7 @@
 		0346E09A296640AA00C25FBD /* ReadController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadController.swift; sourceTree = "<group>"; };
 		0346E09E2966AE6C00C25FBD /* ModelError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelError.swift; sourceTree = "<group>"; };
 		0346E0A02966B8C700C25FBD /* CacheError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheError.swift; sourceTree = "<group>"; };
-		0346E0A2296A8C5000C25FBD /* BacklogDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BacklogDataSource.swift; sourceTree = "<group>"; };
+		0346E0A2296A8C5000C25FBD /* DataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSource.swift; sourceTree = "<group>"; };
 		039E5A1F296BC84D00A18626 /* ActionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionCell.swift; sourceTree = "<group>"; };
 		039E5A20296BC84D00A18626 /* ActionCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ActionCell.xib; sourceTree = "<group>"; };
 		039E5A272970C19400A18626 /* EditableText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableText.swift; sourceTree = "<group>"; };
@@ -80,7 +79,6 @@
 		039E5A342974BF0C00A18626 /* MainController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainController.swift; sourceTree = "<group>"; };
 		039E5A362974C00800A18626 /* ViewUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewUtilities.swift; sourceTree = "<group>"; };
 		039E5A3829765C3100A18626 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
-		03A279AF297890FE009FBB86 /* DataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSource.swift; sourceTree = "<group>"; };
 		03A279B1297B3375009FBB86 /* EditBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditBar.swift; sourceTree = "<group>"; };
 		03A279B2297B3376009FBB86 /* EditBar.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EditBar.xib; sourceTree = "<group>"; };
 		03A279B5297BCF87009FBB86 /* AddButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddButton.swift; sourceTree = "<group>"; };
@@ -152,7 +150,6 @@
 		0346E0A4296A8C5600C25FBD /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				03A279AE297890ED009FBB86 /* DataSources */,
 				03A279BD297E0F48009FBB86 /* List */,
 				039E5A342974BF0C00A18626 /* MainController.swift */,
 			);
@@ -183,21 +180,13 @@
 			path = Utilities;
 			sourceTree = "<group>";
 		};
-		03A279AE297890ED009FBB86 /* DataSources */ = {
-			isa = PBXGroup;
-			children = (
-				03A279AF297890FE009FBB86 /* DataSource.swift */,
-				0346E0A2296A8C5000C25FBD /* BacklogDataSource.swift */,
-			);
-			path = DataSources;
-			sourceTree = "<group>";
-		};
 		03A279BD297E0F48009FBB86 /* List */ = {
 			isa = PBXGroup;
 			children = (
 				03EB9BE82959219400305E5D /* ListController.swift */,
 				039E5A3229748A7000A18626 /* ListEditHandler.swift */,
 				03A279BB297E0E9C009FBB86 /* ListSwiper.swift */,
+				0346E0A2296A8C5000C25FBD /* DataSource.swift */,
 			);
 			path = List;
 			sourceTree = "<group>";
@@ -443,7 +432,7 @@
 				0346E09B296640AA00C25FBD /* ReadController.swift in Sources */,
 				039E5A372974C00800A18626 /* ViewUtilities.swift in Sources */,
 				039E5A2C297387B200A18626 /* SaveTimer.swift in Sources */,
-				0346E0A3296A8C5000C25FBD /* BacklogDataSource.swift in Sources */,
+				0346E0A3296A8C5000C25FBD /* DataSource.swift in Sources */,
 				03DF65182960DE3B000CF4B9 /* ModelController.swift in Sources */,
 				03A279B6297BCF87009FBB86 /* AddButton.swift in Sources */,
 				03EB9BE52959219400305E5D /* AppDelegate.swift in Sources */,
@@ -454,7 +443,6 @@
 				0346E0A12966B8C700C25FBD /* CacheError.swift in Sources */,
 				039E5A21296BC84D00A18626 /* ActionCell.swift in Sources */,
 				03DF6514295FFC03000CF4B9 /* QueryBuilder.swift in Sources */,
-				03A279B0297890FE009FBB86 /* DataSource.swift in Sources */,
 				039E5A3329748A7000A18626 /* ListEditHandler.swift in Sources */,
 				0346E099296640A100C25FBD /* WriteController.swift in Sources */,
 				03A279BC297E0E9C009FBB86 /* ListSwiper.swift in Sources */,

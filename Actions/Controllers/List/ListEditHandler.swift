@@ -110,7 +110,7 @@ extension ListEditHandler: ActionCellDelegate {
     }
     
     //MARK: - Enter
-    
+
     private func enter(
         _ actionId: String,
         _ text: String,
@@ -120,6 +120,7 @@ extension ListEditHandler: ActionCellDelegate {
         // things stay the same if there is an error
         // rather than the alternative of losing data
         guard let rank = getRank(actionId) else { return }
+        guard let storedRank = getStoredRank(actionId) else { return }
         guard let cell = getCell(rank) else { return }
         let (first, second) = text.split(index)
         
@@ -129,12 +130,12 @@ extension ListEditHandler: ActionCellDelegate {
         // create a new action with the second half after the current action
         if index == 0 {
             newId = try? model.write.createAction(
-                first.trim(), parentId: parentId, rank: rank
+                first.trim(), parentId: parentId, rank: storedRank
             )
             tableView.addRow(rank)
         } else {
             newId = try? model.write.createAction(
-                second.trim(), parentId: parentId, rank: rank + 1
+                second.trim(), parentId: parentId, rank: storedRank + 1
             )
             cell.setText(first.trim())
             save(actionId, first.trim())
@@ -150,7 +151,7 @@ extension ListEditHandler: ActionCellDelegate {
     }
     
     //MARK: - Backspace
-    
+
     private func backspace(
         _ actionId: String,
         _ text: String)
@@ -201,6 +202,14 @@ extension ListEditHandler {
         }
     }
     
+    //MARK: - Skip
+    
+    func skip(_ actionId: String) {
+        stopEditing()
+        try? model.write.skip(actionId)
+        tableView.reloadData()
+    }
+    
 }
 
 //MARK: - Helper functions
@@ -231,4 +240,12 @@ extension ListEditHandler {
         guard let data = tableView.dataSource as? DataSource else { return nil }
         return data.ids.firstIndex(of: actionId)
     }
+    
+    //MARK: - Get stored rank
+    
+    private func getStoredRank(_ actionId: String) -> Int? {
+        guard let data = tableView.dataSource as? DataSource else { return nil }
+        return data.storedRank(actionId)
+    }
+    
 }
